@@ -17,16 +17,13 @@ export default function Register() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     try {
       const res = await fetch("http://127.0.0.1:8000/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
       const data = await res.json();
-
       if (res.ok) {
         window.location.href = "/auth/login";
       } else {
@@ -40,38 +37,36 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#FFFDF9" }}>
-      <div className="w-full max-w-md p-8 rounded-3xl" style={{ backgroundColor: "white", border: "1px solid #FFD9E8", boxShadow: "0 4px 24px rgba(255,182,193,0.15)" }}>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFDF9" }}>
+      <div style={{ width: "420px", padding: "48px", borderRadius: "24px", backgroundColor: "white", border: "1px solid #FFD9E8", boxShadow: "0 4px 24px rgba(255,182,193,0.15)" }}>
 
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2" style={{ color: "#FFB7D5" }}>🎨 Palette</h1>
-          <p className="text-sm" style={{ color: "#999" }}>Collect moments. Feel the music.</p>
+        <div style={{ textAlign: "center", marginBottom: "32px" }}>
+          <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#FFB7D5", marginBottom: "8px" }}>🎨 Palette</h1>
+          <p style={{ fontSize: "14px", color: "#999" }}>Collect moments. Feel the music.</p>
         </div>
 
-        <h2 className="text-xl font-semibold mb-6" style={{ color: "#2E2E2E" }}>Create account 🌸</h2>
+        <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#2E2E2E", fontFamily: "Georgia, serif", marginBottom: "24px" }}>Create account 🌸</h2>
 
         {error && (
-          <div className="mb-4 p-3 rounded-xl text-sm" style={{ backgroundColor: "#FFE4E4", color: "#FF6B6B" }}>
+          <div style={{ marginBottom: "16px", padding: "12px", borderRadius: "12px", backgroundColor: "#FFE4E4", color: "#FF6B6B", fontSize: "14px" }}>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleRegister} className="flex flex-col gap-4">
+        <form onSubmit={handleRegister} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <input
             type="text"
             placeholder="Full Name"
             value={formData.full_name}
             onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-            className="w-full px-4 py-3 rounded-xl outline-none text-sm"
-            style={{ backgroundColor: "#FFFDF9", border: "1px solid #FFD9E8", color: "#2E2E2E" }}
+            style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #FFD9E8", backgroundColor: "#FFFDF9", color: "#2E2E2E", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
           />
           <input
             type="text"
             placeholder="Username"
             value={formData.username}
             onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-            className="w-full px-4 py-3 rounded-xl outline-none text-sm"
-            style={{ backgroundColor: "#FFFDF9", border: "1px solid #FFD9E8", color: "#2E2E2E" }}
+            style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #FFD9E8", backgroundColor: "#FFFDF9", color: "#2E2E2E", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
             required
           />
           <input
@@ -79,8 +74,7 @@ export default function Register() {
             placeholder="Email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full px-4 py-3 rounded-xl outline-none text-sm"
-            style={{ backgroundColor: "#FFFDF9", border: "1px solid #FFD9E8", color: "#2E2E2E" }}
+            style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #FFD9E8", backgroundColor: "#FFFDF9", color: "#2E2E2E", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
             required
           />
           <input
@@ -88,21 +82,19 @@ export default function Register() {
             placeholder="Password"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            className="w-full px-4 py-3 rounded-xl outline-none text-sm"
-            style={{ backgroundColor: "#FFFDF9", border: "1px solid #FFD9E8", color: "#2E2E2E" }}
+            style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #FFD9E8", backgroundColor: "#FFFDF9", color: "#2E2E2E", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
             required
           />
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl font-semibold text-sm transition-all"
-            style={{ backgroundColor: "#FFD9E8", color: "#2E2E2E" }}
+            style={{ width: "100%", padding: "12px", borderRadius: "12px", backgroundColor: "#FFD9E8", color: "#2E2E2E", fontSize: "14px", fontWeight: "600", border: "none", cursor: "pointer" }}
           >
             {loading ? "Creating account..." : "Create Account 🌸"}
           </button>
         </form>
 
-        <p className="text-center text-sm mt-6" style={{ color: "#999" }}>
+        <p style={{ textAlign: "center", fontSize: "14px", color: "#999", marginTop: "24px" }}>
           Already have an account?{" "}
           <Link href="/auth/login" style={{ color: "#FFB7D5", fontWeight: "600" }}>
             Login
