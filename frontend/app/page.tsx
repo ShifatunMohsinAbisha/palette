@@ -35,7 +35,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#FFFDF9", color: "#2E2E2E", fontFamily: "system-ui, sans-serif" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#FFFDF9", color: "#2E2E2E", fontFamily: "system-ui, sans-serif", maxWidth: "1280px", margin: "0 auto" }}>
 
       {/* Top Navigation */}
       <header style={{ backgroundColor: "rgba(255,253,249,0.8)", backdropFilter: "blur(12px)", borderBottom: "1px solid #FFD9E8", position: "sticky", top: 0, zIndex: 50 }}>
@@ -56,7 +56,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-6">
+      <main className="w-full px-4 py-6">
 
         {/* Greeting */}
         <div className="mb-6">
@@ -83,7 +83,7 @@ export default function Home() {
         </div>
 
         {/* Masonry Grid */}
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+        <div className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3 px-4">
           {boards.map((board) => (
             <div
               key={board.id}
