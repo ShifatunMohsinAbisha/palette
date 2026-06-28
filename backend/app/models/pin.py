@@ -12,5 +12,3 @@ class Pin(Base):
     note = Column(String, nullable=True)
     board_id = Column(Integer, ForeignKey("boards.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
-
-    board = relationship("Board", back_populates="pins")

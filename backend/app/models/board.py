@@ -14,5 +14,3 @@ class Board(Base):
     is_private = Column(Boolean, default=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
-
-    owner = relationship("User", back_populates="boards")
