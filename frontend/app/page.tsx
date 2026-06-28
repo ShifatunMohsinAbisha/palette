@@ -35,43 +35,45 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#FFFDF9", color: "#2E2E2E", fontFamily: "system-ui, sans-serif", maxWidth: "1280px", margin: "0 auto" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#FFFDF9", color: "#2E2E2E", fontFamily: "system-ui, sans-serif" }}>
 
       {/* Top Navigation */}
-      <header style={{ backgroundColor: "rgba(255,253,249,0.8)", backdropFilter: "blur(12px)", borderBottom: "1px solid #FFD9E8", position: "sticky", top: 0, zIndex: 50 }}>
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-          <h1 className="text-2xl font-bold" style={{ color: "#FFB7D5" }}>🎨 Palette</h1>
-          <div className="flex-1 max-w-md">
-            <input
-              type="text"
-              placeholder="🔍 Search boards, moods, music..."
-              className="w-full px-4 py-2 rounded-full text-sm outline-none"
-              style={{ backgroundColor: "#FFD9E8", border: "none", color: "#2E2E2E" }}
-            />
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="text-xl">🔔</button>
-            <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: "#FFB7D5" }}>A</div>
+      <header style={{ backgroundColor: "rgba(255,253,249,0.95)", backdropFilter: "blur(12px)", borderBottom: "1px solid #FFD9E8", position: "sticky", top: 0, zIndex: 50, width: "100%" }}>
+        <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
+          <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#FFB7D5", whiteSpace: "nowrap" }}>🎨 Palette</h1>
+          <input
+            type="text"
+            placeholder="🔍 Search boards, moods, music..."
+            style={{ flex: 1, maxWidth: "500px", padding: "10px 20px", borderRadius: "999px", border: "none", backgroundColor: "#FFD9E8", color: "#2E2E2E", fontSize: "14px", outline: "none" }}
+          />
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <button style={{ fontSize: "20px", background: "none", border: "none", cursor: "pointer" }}>🔔</button>
+            <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "#FFB7D5", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "700", fontSize: "14px" }}>A</div>
           </div>
         </div>
       </header>
 
-      <main className="w-full px-4 py-6">
+      <main style={{ maxWidth: "1400px", margin: "0 auto", padding: "24px 24px 100px 24px" }}>
 
         {/* Greeting */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-semibold">{greeting}, Abisha 🌸</h2>
-          <p className="text-sm mt-1" style={{ color: "#999" }}>Discover boards that match your mood today</p>
+        <div style={{ marginBottom: "20px" }}>
+          <h2 style={{ fontSize: "24px", fontWeight: "600" }}>{greeting}, Abisha 🌸</h2>
+          <p style={{ fontSize: "14px", color: "#999", marginTop: "4px" }}>Discover boards that match your mood today</p>
         </div>
 
         {/* Category Pills */}
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-8">
+        <div style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "8px", marginBottom: "24px" }}>
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all"
               style={{
+                padding: "8px 16px",
+                borderRadius: "999px",
+                fontSize: "13px",
+                fontWeight: "500",
+                whiteSpace: "nowrap",
+                cursor: "pointer",
                 backgroundColor: activeCategory === cat ? "#FFD9E8" : "white",
                 border: `1px solid ${activeCategory === cat ? "#FFB7D5" : "#eee"}`,
                 color: activeCategory === cat ? "#2E2E2E" : "#888",
@@ -83,28 +85,21 @@ export default function Home() {
         </div>
 
         {/* Masonry Grid */}
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3 px-4">
+        <div style={{ columns: "4", gap: "16px" }}>
           {boards.map((board) => (
             <div
               key={board.id}
-              className="break-inside-avoid rounded-2xl overflow-hidden cursor-pointer group mb-4"
-              style={{ border: "1px solid #FFD9E8", backgroundColor: "white", boxShadow: "0 2px 12px rgba(255,182,193,0.1)" }}
+              style={{ breakInside: "avoid", marginBottom: "16px", borderRadius: "16px", overflow: "hidden", backgroundColor: "white", border: "1px solid #FFD9E8", boxShadow: "0 2px 12px rgba(255,182,193,0.1)", cursor: "pointer" }}
             >
-              <div
-                className="w-full flex items-center justify-center text-5xl"
-                style={{ backgroundColor: board.color, height: `${140 + (board.id % 3) * 40}px` }}
-              >
+              <div style={{ backgroundColor: board.color, height: `${140 + (board.id % 3) * 40}px`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
                 {board.emoji}
               </div>
-              <div className="p-3">
-                <h3 className="font-semibold text-sm leading-tight mb-1">{board.title}</h3>
-                <p className="text-xs mb-2" style={{ color: "#999" }}>by {board.author} · {board.pins} pins</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs" style={{ color: "#ccc" }}>♫ Snowfall</span>
-                  <button
-                    onClick={() => toggleLike(board.id)}
-                    className="text-sm"
-                  >
+              <div style={{ padding: "12px" }}>
+                <h3 style={{ fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>{board.title}</h3>
+                <p style={{ fontSize: "12px", color: "#999", marginBottom: "8px" }}>by {board.author} · {board.pins} pins</p>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: "12px", color: "#ccc" }}>♫ Snowfall</span>
+                  <button onClick={() => toggleLike(board.id)} style={{ fontSize: "13px", background: "none", border: "none", cursor: "pointer" }}>
                     {liked.includes(board.id) ? "❤️" : "🤍"} {board.likes}
                   </button>
                 </div>
@@ -115,8 +110,8 @@ export default function Home() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0" style={{ backgroundColor: "rgba(255,253,249,0.95)", backdropFilter: "blur(12px)", borderTop: "1px solid #FFD9E8" }}>
-        <div className="max-w-6xl mx-auto px-4 py-3 flex justify-around items-center">
+      <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, backgroundColor: "rgba(255,253,249,0.97)", backdropFilter: "blur(12px)", borderTop: "1px solid #FFD9E8", zIndex: 50 }}>
+        <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "12px 24px", display: "flex", justifyContent: "space-around", alignItems: "center" }}>
           {[
             { icon: "🏠", label: "Home", href: "/" },
             { icon: "🔍", label: "Explore", href: "/explore" },
@@ -124,15 +119,13 @@ export default function Home() {
             { icon: "🎵", label: "Music", href: "/music" },
             { icon: "👤", label: "Profile", href: "/profile" },
           ].map(item => (
-            <Link key={item.label} href={item.href} className="flex flex-col items-center gap-1">
-              <span className="text-2xl">{item.icon}</span>
-              <span className="text-xs" style={{ color: "#ccc" }}>{item.label}</span>
+            <Link key={item.label} href={item.href} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", textDecoration: "none" }}>
+              <span style={{ fontSize: "22px" }}>{item.icon}</span>
+              <span style={{ fontSize: "11px", color: "#ccc" }}>{item.label}</span>
             </Link>
           ))}
         </div>
       </nav>
-
-      <div className="h-20" />
     </div>
   );
 }
