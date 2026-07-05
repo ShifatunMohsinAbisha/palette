@@ -6,7 +6,11 @@
   box-sizing: border-box;
 }
 
+/* ═══════════════════════════════════════════════════════
+   PALETTE DESIGN TOKENS — Light Mode (default)
+   ═══════════════════════════════════════════════════════ */
 :root {
+  /* — Legacy tokens (preserved for compatibility) — */
   --bg: #FFFDF9;
   --primary: #FFD9E8;
   --secondary: #EAD9FF;
@@ -15,12 +19,136 @@
   --warning: #FFF4C2;
   --text: #2E2E2E;
   --pink: #FFB7D5;
+
+  /* — Palette Design System — */
+
+  /* Backgrounds */
+  --palette-bg: #FFFDF9;
+  --palette-surface: #FFFFFF;
+  --palette-surface-hover: #FFF8FC;
+  --palette-surface-alt: #FFFDF9;
+
+  /* Brand Colors */
+  --palette-primary: #FFD9E8;
+  --palette-primary-hover: #FFC8DC;
+  --palette-secondary: #EAD9FF;
+  --palette-accent: #DDF4FF;
+  --palette-pink: #FFB7D5;
+
+  /* Semantic Colors */
+  --palette-success: #D9FBE5;
+  --palette-warning: #FFF4C2;
+  --palette-danger: #FFE4E4;
+  --palette-danger-text: #FF6B6B;
+
+  /* Typography */
+  --palette-text: #2E2E2E;
+  --palette-text-secondary: #888888;
+  --palette-text-muted: #999999;
+  --palette-text-faint: #CCCCCC;
+  --palette-text-on-pink: #FFFFFF;
+
+  /* Borders */
+  --palette-border: #FFD9E8;
+  --palette-border-subtle: #EEEEEE;
+  --palette-border-active: #FFB7D5;
+
+  /* Shadows */
+  --palette-shadow: rgba(255, 182, 193, 0.1);
+  --palette-shadow-lg: rgba(255, 182, 193, 0.15);
+  --palette-shadow-xl: rgba(255, 182, 193, 0.2);
+
+  /* Navigation Glass */
+  --palette-nav-bg: rgba(255, 253, 249, 0.95);
+  --palette-nav-bottom-bg: rgba(255, 253, 249, 0.97);
+
+  /* Controls */
+  --palette-toggle-bg: #EEEEEE;
+  --palette-input-bg: #FFFDF9;
+
+  /* Gradients */
+  --palette-gradient-music: linear-gradient(135deg, #FFD9E8, #EAD9FF);
+
+  /* Progress */
+  --palette-progress-track: rgba(255, 255, 255, 0.5);
+  --palette-progress-fill: #FFFFFF;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PALETTE DESIGN TOKENS — Dark Mode
+   "Cherry Blossom at Night" 🌸🌙
+   Deep plum · Dark mauve · Rose shadows · Lavender mist
+   ═══════════════════════════════════════════════════════ */
+.dark {
+  /* — Legacy tokens (dark overrides) — */
+  --bg: #1A1520;
+  --primary: #3D2A3A;
+  --secondary: #2C2440;
+  --accent: #1E2D3D;
+  --success: #1E3329;
+  --warning: #33301A;
+  --text: #F0E6F0;
+  --pink: #FFB7D5;
+
+  /* — Palette Design System — */
+
+  /* Backgrounds */
+  --palette-bg: #1A1520;
+  --palette-surface: #241E2C;
+  --palette-surface-hover: #2E2738;
+  --palette-surface-alt: #1E1826;
+
+  /* Brand Colors (dark variants) */
+  --palette-primary: #3D2A3A;
+  --palette-primary-hover: #4A3347;
+  --palette-secondary: #2C2440;
+  --palette-accent: #1E2D3D;
+  --palette-pink: #FFB7D5;
+
+  /* Semantic Colors */
+  --palette-success: #1E3329;
+  --palette-warning: #33301A;
+  --palette-danger: #3D1E1E;
+  --palette-danger-text: #FF8A8A;
+
+  /* Typography */
+  --palette-text: #F0E6F0;
+  --palette-text-secondary: #B8A8C8;
+  --palette-text-muted: #9088A0;
+  --palette-text-faint: #6D6380;
+  --palette-text-on-pink: #FFFFFF;
+
+  /* Borders */
+  --palette-border: #3D2A3A;
+  --palette-border-subtle: #2E2738;
+  --palette-border-active: #FFB7D5;
+
+  /* Shadows */
+  --palette-shadow: rgba(20, 10, 25, 0.3);
+  --palette-shadow-lg: rgba(20, 10, 25, 0.4);
+  --palette-shadow-xl: rgba(20, 10, 25, 0.5);
+
+  /* Navigation Glass */
+  --palette-nav-bg: rgba(26, 21, 32, 0.92);
+  --palette-nav-bottom-bg: rgba(26, 21, 32, 0.95);
+
+  /* Controls */
+  --palette-toggle-bg: #3D2A3A;
+  --palette-input-bg: #1E1826;
+
+  /* Gradients */
+  --palette-gradient-music: linear-gradient(135deg, #3D2A3A, #2C2440);
+
+  /* Progress */
+  --palette-progress-track: rgba(255, 255, 255, 0.12);
+  --palette-progress-fill: rgba(255, 183, 213, 0.7);
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--text);
+  background-color: var(--palette-bg);
+  color: var(--palette-text);
   font-family: system-ui, -apple-system, sans-serif;
+  transition: background-color 300ms ease, color 300ms ease;
 }
 
 /* Hide scrollbar but keep scrolling */
@@ -33,7 +161,15 @@ body {
   scrollbar-width: none;
 }
 
-/* Smooth transitions everywhere */
+/* Smooth theme transitions on key properties */
 * {
-  transition: all 0.2s ease;
+  transition: background-color 300ms ease, color 200ms ease,
+    border-color 300ms ease, box-shadow 300ms ease;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
 }

@@ -37,18 +37,18 @@ export default function Register() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFDF9" }}>
-      <div style={{ width: "420px", padding: "48px", borderRadius: "24px", backgroundColor: "white", border: "1px solid #FFD9E8", boxShadow: "0 4px 24px rgba(255,182,193,0.15)" }}>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "var(--palette-bg)" }}>
+      <div style={{ width: "420px", padding: "48px", borderRadius: "24px", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", boxShadow: `0 4px 24px var(--palette-shadow-lg)` }}>
 
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
-          <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#FFB7D5", marginBottom: "8px" }}>🎨 Palette</h1>
-          <p style={{ fontSize: "14px", color: "#999" }}>Collect moments. Feel the music.</p>
+          <h1 style={{ fontSize: "28px", fontWeight: "700", color: "var(--palette-pink)", marginBottom: "8px" }}>🎨 Palette</h1>
+          <p style={{ fontSize: "14px", color: "var(--palette-text-muted)" }}>Collect moments. Feel the music.</p>
         </div>
 
-        <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#2E2E2E", fontFamily: "Georgia, serif", marginBottom: "24px" }}>Create account 🌸</h2>
+        <h2 style={{ fontSize: "20px", fontWeight: "600", color: "var(--palette-text)", fontFamily: "Georgia, serif", marginBottom: "24px" }}>Create account 🌸</h2>
 
         {error && (
-          <div style={{ marginBottom: "16px", padding: "12px", borderRadius: "12px", backgroundColor: "#FFE4E4", color: "#FF6B6B", fontSize: "14px" }}>
+          <div style={{ marginBottom: "16px", padding: "12px", borderRadius: "12px", backgroundColor: "var(--palette-danger)", color: "var(--palette-danger-text)", fontSize: "14px" }}>
             {error}
           </div>
         )}
@@ -59,14 +59,14 @@ export default function Register() {
             placeholder="Full Name"
             value={formData.full_name}
             onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-            style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #FFD9E8", backgroundColor: "#FFFDF9", color: "#2E2E2E", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
+            style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid var(--palette-border)", backgroundColor: "var(--palette-input-bg)", color: "var(--palette-text)", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
           />
           <input
             type="text"
             placeholder="Username"
             value={formData.username}
             onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-            style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #FFD9E8", backgroundColor: "#FFFDF9", color: "#2E2E2E", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
+            style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid var(--palette-border)", backgroundColor: "var(--palette-input-bg)", color: "var(--palette-text)", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
             required
           />
           <input
@@ -74,7 +74,7 @@ export default function Register() {
             placeholder="Email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #FFD9E8", backgroundColor: "#FFFDF9", color: "#2E2E2E", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
+            style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid var(--palette-border)", backgroundColor: "var(--palette-input-bg)", color: "var(--palette-text)", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
             required
           />
           <input
@@ -82,21 +82,21 @@ export default function Register() {
             placeholder="Password"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #FFD9E8", backgroundColor: "#FFFDF9", color: "#2E2E2E", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
+            style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid var(--palette-border)", backgroundColor: "var(--palette-input-bg)", color: "var(--palette-text)", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
             required
           />
           <button
             type="submit"
             disabled={loading}
-            style={{ width: "100%", padding: "12px", borderRadius: "12px", backgroundColor: "#FFD9E8", color: "#2E2E2E", fontSize: "14px", fontWeight: "600", border: "none", cursor: "pointer" }}
+            style={{ width: "100%", padding: "12px", borderRadius: "12px", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", fontSize: "14px", fontWeight: "600", border: "none", cursor: "pointer" }}
           >
             {loading ? "Creating account..." : "Create Account 🌸"}
           </button>
         </form>
 
-        <p style={{ textAlign: "center", fontSize: "14px", color: "#999", marginTop: "24px" }}>
+        <p style={{ textAlign: "center", fontSize: "14px", color: "var(--palette-text-muted)", marginTop: "24px" }}>
           Already have an account?{" "}
-          <Link href="/auth/login" style={{ color: "#FFB7D5", fontWeight: "600" }}>
+          <Link href="/auth/login" style={{ color: "var(--palette-pink)", fontWeight: "600" }}>
             Login
           </Link>
         </p>

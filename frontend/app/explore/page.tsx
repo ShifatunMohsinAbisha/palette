@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const exploreBoards = [
   { id: 1, title: "Cherry Blossom Afternoon", author: "Luna", likes: "2.3K", pins: 45, color: "#FFD9E8", emoji: "🌸", category: "Aesthetic" },
@@ -31,18 +32,21 @@ export default function Explore() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#FFFDF9", fontFamily: "system-ui, sans-serif" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "var(--palette-bg)", fontFamily: "system-ui, sans-serif" }}>
 
       {/* Header */}
-      <header style={{ backgroundColor: "rgba(255,253,249,0.95)", backdropFilter: "blur(12px)", borderBottom: "1px solid #FFD9E8", position: "sticky", top: 0, zIndex: 50 }}>
+      <header style={{ backgroundColor: "var(--palette-nav-bg)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--palette-border)", position: "sticky", top: 0, zIndex: 50 }}>
         <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
-          <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#FFB7D5" }}>🎨 Palette</h1>
+          <h1 style={{ fontSize: "22px", fontWeight: "700", color: "var(--palette-pink)" }}>🎨 Palette</h1>
           <input
             type="text"
             placeholder="🔍 Search boards, moods, music..."
-            style={{ flex: 1, maxWidth: "500px", padding: "10px 20px", borderRadius: "999px", border: "none", backgroundColor: "#FFD9E8", color: "#2E2E2E", fontSize: "14px", outline: "none" }}
+            style={{ flex: 1, maxWidth: "500px", padding: "10px 20px", borderRadius: "999px", border: "none", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", fontSize: "14px", outline: "none" }}
           />
-          <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "#FFB7D5", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "700", fontSize: "14px" }}>A</div>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <ThemeToggle />
+            <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "var(--palette-pink)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "700", fontSize: "14px" }}>A</div>
+          </div>
         </div>
       </header>
 
@@ -50,7 +54,7 @@ export default function Explore() {
 
         <div style={{ marginBottom: "20px" }}>
           <h2 style={{ fontSize: "24px", fontWeight: "600" }}>Explore 🔍</h2>
-          <p style={{ fontSize: "14px", color: "#999", marginTop: "4px" }}>Discover beautiful boards from creators around the world</p>
+          <p style={{ fontSize: "14px", color: "var(--palette-text-muted)", marginTop: "4px" }}>Discover beautiful boards from creators around the world</p>
         </div>
 
         {/* Category Pills */}
@@ -66,9 +70,9 @@ export default function Explore() {
                 fontWeight: "500",
                 whiteSpace: "nowrap",
                 cursor: "pointer",
-                backgroundColor: activeCategory === cat ? "#FFD9E8" : "white",
-                border: `1px solid ${activeCategory === cat ? "#FFB7D5" : "#eee"}`,
-                color: activeCategory === cat ? "#2E2E2E" : "#888",
+                backgroundColor: activeCategory === cat ? "var(--palette-primary)" : "var(--palette-surface)",
+                border: `1px solid ${activeCategory === cat ? "var(--palette-border-active)" : "var(--palette-border-subtle)"}`,
+                color: activeCategory === cat ? "var(--palette-text)" : "var(--palette-text-secondary)",
               }}
             >
               {cat}
@@ -81,16 +85,16 @@ export default function Explore() {
           {filtered.map((board) => (
             <div
               key={board.id}
-              style={{ breakInside: "avoid", marginBottom: "16px", borderRadius: "16px", overflow: "hidden", backgroundColor: "white", border: "1px solid #FFD9E8", boxShadow: "0 2px 12px rgba(255,182,193,0.1)", cursor: "pointer" }}
+              style={{ breakInside: "avoid", marginBottom: "16px", borderRadius: "16px", overflow: "hidden", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", boxShadow: `0 2px 12px var(--palette-shadow)`, cursor: "pointer" }}
             >
               <div style={{ backgroundColor: board.color, height: `${140 + (board.id % 3) * 40}px`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
                 {board.emoji}
               </div>
               <div style={{ padding: "12px" }}>
                 <h3 style={{ fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>{board.title}</h3>
-                <p style={{ fontSize: "12px", color: "#999", marginBottom: "8px" }}>by {board.author} · {board.pins} pins</p>
+                <p style={{ fontSize: "12px", color: "var(--palette-text-muted)", marginBottom: "8px" }}>by {board.author} · {board.pins} pins</p>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <span style={{ fontSize: "12px", color: "#ccc" }}>♫ Snowfall</span>
+                  <span style={{ fontSize: "12px", color: "var(--palette-text-faint)" }}>♫ Snowfall</span>
                   <button onClick={() => toggleLike(board.id)} style={{ fontSize: "13px", background: "none", border: "none", cursor: "pointer" }}>
                     {liked.includes(board.id) ? "❤️" : "🤍"} {board.likes}
                   </button>
@@ -102,7 +106,7 @@ export default function Explore() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, backgroundColor: "rgba(255,253,249,0.97)", backdropFilter: "blur(12px)", borderTop: "1px solid #FFD9E8", zIndex: 50 }}>
+      <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, backgroundColor: "var(--palette-nav-bottom-bg)", backdropFilter: "blur(12px)", borderTop: "1px solid var(--palette-border)", zIndex: 50 }}>
         <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "12px 24px", display: "flex", justifyContent: "space-around", alignItems: "center" }}>
           {[
             { icon: "🏠", label: "Home", href: "/" },
@@ -113,7 +117,7 @@ export default function Explore() {
           ].map(item => (
             <Link key={item.label} href={item.href} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", textDecoration: "none" }}>
               <span style={{ fontSize: "22px" }}>{item.icon}</span>
-              <span style={{ fontSize: "11px", color: "#ccc" }}>{item.label}</span>
+              <span style={{ fontSize: "11px", color: "var(--palette-text-faint)" }}>{item.label}</span>
             </Link>
           ))}
         </div>
