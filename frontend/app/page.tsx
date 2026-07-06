@@ -19,17 +19,11 @@ const demoBoards = [
 const categories = ["✨ Trending", "📌 For You", "🎵 Music", "💖 Cute", "🌸 Aesthetic", "🌿 Nature", "📚 Study", "🎮 Gaming"];
 
 export default function Home() {
-  const [greeting, setGreeting] = useState("");
   const [activeCategory, setActiveCategory] = useState("✨ Trending");
   const [liked, setLiked] = useState<number[]>([]);
   const [apiBoards, setApiBoards] = useState<Array<{ id: number; title: string; author: string; likes: string; pins: number; color: string; emoji: string }>>([]); 
 
   useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting("Good Morning");
-    else if (hour < 17) setGreeting("Good Afternoon");
-    else setGreeting("Good Evening");
-
     // Fetch real boards from API
     api.getBoards().then((data) => {
       const mapped = data.map((b: { id: number; title: string; cover_color: string; cover_emoji: string; description?: string }) => ({
@@ -75,7 +69,7 @@ export default function Home() {
 
         {/* Greeting */}
         <div style={{ marginBottom: "20px" }}>
-          <h2 style={{ fontSize: "24px", fontWeight: "600" }}>{greeting}, Abisha 🌸</h2>
+          <h2 style={{ fontSize: "24px", fontWeight: "600" }}>Welcome, Abisha 🌸</h2>
           <p style={{ fontSize: "14px", color: "var(--palette-text-muted)", marginTop: "4px" }}>Discover boards that match your mood today</p>
         </div>
 
