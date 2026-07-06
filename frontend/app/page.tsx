@@ -99,24 +99,36 @@ export default function Home() {
         {/* Masonry Grid */}
         <div style={{ columns: "4", gap: "16px" }}>
           {[...apiBoards, ...demoBoards].map((board) => (
-            <div
+            <Link
               key={board.id}
-              style={{ breakInside: "avoid", marginBottom: "16px", borderRadius: "16px", overflow: "hidden", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", boxShadow: `0 2px 12px var(--palette-shadow)`, cursor: "pointer" }}
+              href={`/boards/${board.id}`}
+              style={{ display: "block", textDecoration: "none", color: "inherit", breakInside: "avoid", marginBottom: "16px" }}
             >
-              <div style={{ backgroundColor: board.color, height: `${140 + (Math.abs(board.id) % 3) * 40}px`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
-                {board.emoji}
-              </div>
-              <div style={{ padding: "12px" }}>
-                <h3 style={{ fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>{board.title}</h3>
-                <p style={{ fontSize: "12px", color: "var(--palette-text-muted)", marginBottom: "8px" }}>by {board.author} · {board.pins} pins</p>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <span style={{ fontSize: "12px", color: "var(--palette-text-faint)" }}>♫ Snowfall</span>
-                  <button onClick={() => toggleLike(board.id)} style={{ fontSize: "13px", background: "none", border: "none", cursor: "pointer", color: "var(--palette-text)" }}>
-                    {liked.includes(board.id) ? "❤️" : "🤍"} {board.likes}
-                  </button>
+              <div
+                style={{ borderRadius: "16px", overflow: "hidden", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", boxShadow: `0 2px 12px var(--palette-shadow)`, cursor: "pointer" }}
+              >
+                <div style={{ backgroundColor: board.color, height: `${140 + (Math.abs(board.id) % 3) * 40}px`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
+                  {board.emoji}
+                </div>
+                <div style={{ padding: "12px" }}>
+                  <h3 style={{ fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>{board.title}</h3>
+                  <p style={{ fontSize: "12px", color: "var(--palette-text-muted)", marginBottom: "8px" }}>by {board.author} · {board.pins} pins</p>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: "12px", color: "var(--palette-text-faint)" }}>♫ Snowfall</span>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleLike(board.id);
+                      }}
+                      style={{ background: "none", border: "none", cursor: "pointer", color: "var(--palette-text)", fontSize: "13px" }}
+                    >
+                      {liked.includes(board.id) ? "❤️" : "🤍"} {board.likes}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </main>

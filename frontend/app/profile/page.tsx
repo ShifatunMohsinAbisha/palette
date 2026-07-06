@@ -75,15 +75,21 @@ export default function Profile() {
         )}
         <div style={{ columns: "4", gap: "16px" }}>
           {boards.map((board) => (
-            <div key={board.id} style={{ breakInside: "avoid", marginBottom: "16px", borderRadius: "16px", overflow: "hidden", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", cursor: "pointer" }}>
-              <div style={{ backgroundColor: board.color, height: "140px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
-                {board.emoji}
+            <Link
+              key={board.id}
+              href={`/boards/${board.id}`}
+              style={{ display: "block", textDecoration: "none", color: "inherit", breakInside: "avoid", marginBottom: "16px" }}
+            >
+              <div style={{ borderRadius: "16px", overflow: "hidden", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", cursor: "pointer" }}>
+                <div style={{ backgroundColor: board.color, height: "140px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
+                  {board.emoji}
+                </div>
+                <div style={{ padding: "12px" }}>
+                  <h3 style={{ fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>{board.title}</h3>
+                  <p style={{ fontSize: "12px", color: "var(--palette-text-muted)" }}>{board.pins} pins</p>
+                </div>
               </div>
-              <div style={{ padding: "12px" }}>
-                <h3 style={{ fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>{board.title}</h3>
-                <p style={{ fontSize: "12px", color: "var(--palette-text-muted)" }}>{board.pins} pins</p>
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
       </main>

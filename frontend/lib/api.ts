@@ -62,4 +62,10 @@ export const api = {
     if (!res.ok) throw new Error("Failed to fetch boards");
     return res.json();
   },
+
+  getBoard: async (id: number | string) => {
+    const res = await fetch(`${API_URL}/boards/${id}`);
+    if (!res.ok) throw new Error("Failed to fetch board");
+    return res.json();
+  },
 };
