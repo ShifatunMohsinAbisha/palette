@@ -1,16 +1,34 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
+import { api } from "@/lib/api";
 
-const userBoards = [
-  { id: 1, title: "Cherry Blossom Afternoon", pins: 45, color: "#FFD9E8", emoji: "🌸" },
-  { id: 2, title: "Midnight Study Vibes", pins: 32, color: "#EAD9FF", emoji: "🌙" },
-  { id: 3, title: "Ocean Daydream", pins: 67, color: "#DDF4FF", emoji: "🌊" },
-  { id: 4, title: "Golden Hour", pins: 89, color: "#FFF4C2", emoji: "☀️" },
-];
+interface BoardData {
+  id: number;
+  title: string;
+  pins: number;
+  color: string;
+  emoji: string;
+}
 
 export default function Profile() {
+  const [boards, setBoards] = useState<BoardData[]>([]);
+
+  useEffect(() => {
+    api.getBoards().then((data) => {
+      const mapped = data.map((b: { id: number; title: string; cover_color: string; cover_emoji: string }) => ({
+        id: b.id,
+        title: b.title,
+        pins: 0,
+        color: b.cover_color,
+        emoji: b.cover_emoji,
+      }));
+      setBoards(mapped);
+    }).catch(() => {});
+  }, []);
+
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--palette-bg)", fontFamily: "system-ui, sans-serif" }}>
 
@@ -35,7 +53,7 @@ export default function Profile() {
 
           <div style={{ display: "flex", gap: "40px", marginBottom: "20px" }}>
             {[
-              { label: "Boards", value: "4" },
+              { label: "Boards", value: String(boards.length) },
               { label: "Followers", value: "1.2K" },
               { label: "Following", value: "348" },
             ].map(stat => (
@@ -52,8 +70,11 @@ export default function Profile() {
         </div>
 
         <h3 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "16px" }}>My Boards</h3>
+        {boards.length === 0 && (
+          <p style={{ fontSize: "14px", color: "var(--palette-text-muted)", textAlign: "center", padding: "40px 0" }}>No boards yet. Create your first one! 🌸</p>
+        )}
         <div style={{ columns: "4", gap: "16px" }}>
-          {userBoards.map((board) => (
+          {boards.map((board) => (
             <div key={board.id} style={{ breakInside: "avoid", marginBottom: "16px", borderRadius: "16px", overflow: "hidden", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", cursor: "pointer" }}>
               <div style={{ backgroundColor: board.color, height: "140px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
                 {board.emoji}
