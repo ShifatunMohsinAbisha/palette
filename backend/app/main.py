@@ -7,6 +7,7 @@ from app.models.user import Base
 # Import all models so their tables register with Base.metadata
 from app.models.board import Board  # noqa: F401
 from app.models.pin import Pin  # noqa: F401
+from app.models.song import Song  # noqa: F401
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

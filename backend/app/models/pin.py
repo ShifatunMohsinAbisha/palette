@@ -11,4 +11,5 @@ class Pin(Base):
     image_url = Column(String, nullable=True)
     note = Column(String, nullable=True)
     board_id = Column(Integer, ForeignKey("boards.id"))
+    position = Column(Integer, default=0, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
