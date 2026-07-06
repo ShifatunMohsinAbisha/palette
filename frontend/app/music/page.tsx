@@ -5,26 +5,25 @@ import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 
 const initialPlaylists = [
-  { id: 1, title: "Snowfall", artist: "Øneheart & reidenshi", query: "Snowfall Øneheart", mood: "Chill", color: "#DDF4FF", emoji: "❄️", duration: "2:04", youtubeId: "soRjcajliHE" },
+  { id: 1, title: "Chemtrails Over the Country Club", artist: "Lana Del Rey", query: "Chemtrails Over the Country Club Lana Del Rey", mood: "Chill", color: "#DDF4FF", emoji: "🛩️", duration: "4:31", youtubeId: "gCw1f1GmPaU" },
   { id: 2, title: "Sweater Weather", artist: "The Neighbourhood", query: "Sweater Weather The Neighbourhood", mood: "Melancholy", color: "#EAD9FF", emoji: "🌙", duration: "4:00", youtubeId: "GCdwKhTtNNw" },
-  { id: 3, title: "golden hour", artist: "JVKE", query: "golden hour JVKE", mood: "Happy", color: "#FFF4C2", emoji: "☀️", duration: "3:29", youtubeId: "N_YSGP2GkAI" },
-  { id: 4, title: "Glimpse of Us", artist: "Joji", query: "Glimpse of Us Joji", mood: "Peaceful", color: "#FFD9E8", emoji: "🌸", duration: "3:57", youtubeId: "FvOpPnKeSSQ" },
+  { id: 3, title: "Perfect", artist: "Ed Sheeran", query: "Perfect Ed Sheeran", mood: "Happy", color: "#FFF4C2", emoji: "💑", duration: "4:23", youtubeId: "2Vv-BfVoq4g" },
+  { id: 4, title: "Counting Stars", artist: "OneRepublic", query: "Counting Stars OneRepublic", mood: "Peaceful", color: "#FFD9E8", emoji: "⭐", duration: "4:17", youtubeId: "hT_nvWreIhg" },
   { id: 5, title: "Exile", artist: "Taylor Swift ft. Bon Iver", query: "Exile Taylor Swift", mood: "Calm", color: "#D9FBE5", emoji: "🌿", duration: "4:45", youtubeId: "osdoLjUNFnA" },
-  { id: 6, title: "Blinding Lights", artist: "The Weeknd", query: "Blinding Lights The Weeknd", mood: "Energetic", color: "#EAD9FF", emoji: "💫", duration: "3:20", youtubeId: "fHI8X4OXluQ" },
-  { id: 7, title: "Can't Help Falling in Love", artist: "Elvis Presley", query: "Can't Help Falling in Love Elvis Presley", mood: "Calm", color: "#FFD9E8", emoji: "💖", duration: "3:00", youtubeId: "v2H4l9tLxfc" },
-  { id: 8, title: "Love Story", artist: "Taylor Swift", query: "Love Story Taylor Swift", mood: "Happy", color: "#FFF4C2", emoji: "🏰", duration: "3:56", youtubeId: "8xg3vE8Ie_E" },
-  { id: 9, title: "All Too Well (10 Minute Version)", artist: "Taylor Swift", query: "All Too Well 10 Minute Version Taylor Swift", mood: "Melancholy", color: "#EAD9FF", emoji: "🧣", duration: "10:13", youtubeId: "RF0Hhr2kIl0" },
-  { id: 10, title: "Dress", artist: "Taylor Swift", query: "Dress Taylor Swift", mood: "Chill", color: "#DDF4FF", emoji: "👗", duration: "5:02", youtubeId: "j2n5mRe0s54" },
-  { id: 11, title: "Chiro Adhora", artist: "Miftah Zaman", query: "Chiro Adhora Miftah Zaman", mood: "Peaceful", color: "#D9FBE5", emoji: "✨", duration: "4:12", youtubeId: "W55T-09uGZ8" },
-  { id: 12, title: "Etota Valobashi", artist: "Recall", query: "Etota Bhalobashi Recall band", mood: "Melancholy", color: "#EAD9FF", emoji: "🎸", duration: "4:32", youtubeId: "o2kw4MaBVa4" },
-  { id: 13, title: "Shoto Danar Projapoti", artist: "Arafat Mohsin", query: "Shoto Danar Projapoti Arafat Mohsin", mood: "Happy", color: "#FFF4C2", emoji: "🦋", duration: "3:53", youtubeId: "U32cZrtRJN4" },
-  { id: 14, title: "Tumi", artist: "Level Five", query: "Tumi Level Five", mood: "Chill", color: "#DDF4FF", emoji: "🎤", duration: "4:05", youtubeId: "NQp3cbSkqbo" },
-  { id: 15, title: "Gangnam Style", artist: "PSY", query: "Gangnam Style PSY", mood: "Energetic", color: "#EAD9FF", emoji: "😎", duration: "4:13", youtubeId: "9bZkp7q19f0" },
-  { id: 16, title: "Bilionera", artist: "Otilia", query: "Bilionera Otilia RotonMusicTV", mood: "Energetic", color: "#FFD9E8", emoji: "💃", duration: "3:05", youtubeId: "QH2-TGUlwu4" },
-  { id: 17, title: "TiK ToK", artist: "Kesha", query: "TiK ToK Kesha", mood: "Energetic", color: "#FFF4C2", emoji: "⏰", duration: "3:35", youtubeId: "iP6XpLQM2Cs" },
-  { id: 18, title: "Alien Superstar", artist: "Beyoncé", query: "Alien Superstar Beyonce", mood: "Energetic", color: "#EAD9FF", emoji: "🛸", duration: "4:35", youtubeId: "e_aT9pAGQo8" },
-  { id: 19, title: "Love Again", artist: "Dua Lipa", query: "Love Again Dua Lipa", mood: "Happy", color: "#FFD9E8", emoji: "❤️", duration: "4:18", youtubeId: "BC19n8TZV5k" },
-  { id: 20, title: "Supercut", artist: "Lorde", query: "Supercut Lorde", mood: "Chill", color: "#DDF4FF", emoji: "🎞️", duration: "4:37", youtubeId: "p1Zt474s6m8" }
+  { id: 6, title: "Blinding Lights", artist: "The Weeknd", query: "Blinding Lights The Weeknd", mood: "Energetic", color: "#EAD9FF", emoji: "💫", duration: "3:20", youtubeId: "4NRXx6U8ABQ" },
+  { id: 7, title: "Shape of You", artist: "Ed Sheeran", query: "Shape of You Ed Sheeran", mood: "Happy", color: "#FFF4C2", emoji: "🏰", duration: "3:56", youtubeId: "JGwWNGJdvx8" },
+  { id: 8, title: "Believer", artist: "Imagine Dragons", query: "Believer Imagine Dragons", mood: "Melancholy", color: "#EAD9FF", emoji: "🧣", duration: "3:24", youtubeId: "7wtfhZwyrcc" },
+  { id: 9, title: "Dress", artist: "Taylor Swift", query: "Dress Taylor Swift reputation", mood: "Chill", color: "#DDF4FF", emoji: "👗", duration: "5:02", youtubeId: "w8kzHIl0xgw" },
+  { id: 10, title: "Riptide", artist: "Vance Joy", query: "Riptide Vance Joy", mood: "Peaceful", color: "#D9FBE5", emoji: "🎻", duration: "3:24", youtubeId: "uTaL05_4a3o" },
+  { id: 11, title: "Etota Valobashi", artist: "Recall", query: "Etota Bhalobashi Recall band", mood: "Melancholy", color: "#EAD9FF", emoji: "🎸", duration: "4:32", youtubeId: "o2kw4MaBVa4" },
+  { id: 12, title: "Shoto Danar Projapoti", artist: "Arafat Mohsin", query: "Shoto Danar Projapoti Arafat Mohsin", mood: "Happy", color: "#FFF4C2", emoji: "🦋", duration: "3:53", youtubeId: "U32cZrtRJN4" },
+  { id: 13, title: "Tumi", artist: "Level Five", query: "Tumi Level Five", mood: "Chill", color: "#DDF4FF", emoji: "🎤", duration: "4:05", youtubeId: "NQp3cbSkqbo" },
+  { id: 14, title: "Gangnam Style", artist: "PSY", query: "Gangnam Style PSY", mood: "Energetic", color: "#EAD9FF", emoji: "😎", duration: "4:13", youtubeId: "9bZkp7q19f0" },
+  { id: 15, title: "Stressed Out", artist: "Twenty One Pilots", query: "Stressed Out Twenty One Pilots", mood: "Energetic", color: "#FFD9E8", emoji: "💃", duration: "3:22", youtubeId: "pXRkWzztxqU" },
+  { id: 16, title: "TiK ToK", artist: "Kesha", query: "TiK ToK Kesha", mood: "Energetic", color: "#FFF4C2", emoji: "⏰", duration: "3:35", youtubeId: "iP6XpLQM2Cs" },
+  { id: 17, title: "Alien Superstar", artist: "Beyoncé", query: "Alien Superstar Beyonce", mood: "Energetic", color: "#EAD9FF", emoji: "🛸", duration: "4:35", youtubeId: "e_aT9pAGQo8" },
+  { id: 18, title: "Love Again", artist: "Dua Lipa", query: "Love Again Dua Lipa", mood: "Happy", color: "#FFD9E8", emoji: "❤️", duration: "4:18", youtubeId: "BC19kwABFwc" },
+  { id: 19, title: "Wake Me Up", artist: "Avicii", query: "Wake Me Up Avicii", mood: "Chill", color: "#DDF4FF", emoji: "🎞️", duration: "4:09", youtubeId: "IcrbM1l_BoI" }
 ];
 
 const moods = ["All", "Chill", "Peaceful", "Happy", "Calm", "Energetic", "Melancholy"];
@@ -55,6 +54,7 @@ export default function Music() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(180);
 
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const playerRef = useRef<any>(null);
 
   // Load YouTube script on mount and fetch iTunes artwork
@@ -67,16 +67,21 @@ export default function Music() {
       firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag);
     }
 
-    // 2. Initialize YT.Player on ready
+    // 2. Initialize YT.Player when ready
     const initPlayer = () => {
       const YT = (window as any).YT;
-      if (YT && YT.Player && !playerRef.current) {
+      if (YT && YT.Player && !playerRef.current && containerRef.current) {
+        containerRef.current.innerHTML = "";
+        const playerDiv = document.createElement("div");
+        playerDiv.id = "yt-player";
+        containerRef.current.appendChild(playerDiv);
+
         playerRef.current = new YT.Player("yt-player", {
-          height: "0",
-          width: "0",
-          videoId: initialPlaylists[0].youtubeId,
+          height: "1",
+          width: "1",
+          videoId: initialPlaylists[currentTrack].youtubeId,
           playerVars: {
-            autoplay: 0,
+            autoplay: isPlaying ? 1 : 0,
             controls: 0,
             disablekb: 1,
             fs: 0,
@@ -85,8 +90,12 @@ export default function Music() {
             showinfo: 0
           },
           events: {
+            onReady: (event: any) => {
+              if (isPlaying) {
+                event.target.playVideo();
+              }
+            },
             onStateChange: (event: any) => {
-              // 0 = ended, 1 = playing, 2 = paused
               if (event.data === 0) {
                 nextTrack();
               }
@@ -96,11 +105,15 @@ export default function Music() {
       }
     };
 
-    if ((window as any).YT && (window as any).YT.Player) {
-      initPlayer();
-    } else {
-      (window as any).onYouTubeIframeAPIReady = initPlayer;
-    }
+    const checkYT = () => {
+      const YT = (window as any).YT;
+      if (YT && YT.Player) {
+        initPlayer();
+      } else {
+        setTimeout(checkYT, 100);
+      }
+    };
+    checkYT();
 
     // 3. Fetch iTunes Artwork
     const fetchArtworks = async () => {
@@ -146,7 +159,10 @@ export default function Music() {
           videoId: activeTrack.youtubeId,
           startSeconds: 0
         });
-        if (!isPlaying) {
+        setCurrentTime(0);
+        if (isPlaying) {
+          player.playVideo();
+        } else {
           player.pauseVideo();
         }
       }
@@ -169,22 +185,19 @@ export default function Music() {
     }
   }, [isPlaying]);
 
-  // Keep progress bar and timers updated
+  // Keep progress bar and timers updated at all times
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        const player = playerRef.current;
-        if (player && typeof player.getCurrentTime === "function" && typeof player.getDuration === "function") {
-          const time = player.getCurrentTime() || 0;
-          const dur = player.getDuration() || 0;
-          setCurrentTime(time);
-          if (dur) setDuration(dur);
-        }
-      }, 500);
-    }
+    const interval = setInterval(() => {
+      const player = playerRef.current;
+      if (player && typeof player.getCurrentTime === "function" && typeof player.getDuration === "function") {
+        const time = player.getCurrentTime() || 0;
+        const dur = player.getDuration() || 0;
+        setCurrentTime(time);
+        if (dur) setDuration(dur);
+      }
+    }, 500);
     return () => clearInterval(interval);
-  }, [isPlaying]);
+  }, []);
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
@@ -273,11 +286,12 @@ export default function Music() {
           </div>
 
           {/* Hidden YouTube Iframe Player container */}
-          <div style={{ position: "absolute", width: 0, height: 0, opacity: 0, overflow: "hidden", pointerEvents: "none" }}>
-            <div id="yt-player" />
-          </div>
+          <div 
+            ref={containerRef}
+            style={{ position: "fixed", top: "-9999px", width: "1px", height: "1px", overflow: "hidden", pointerEvents: "none" }} 
+          />
 
-          {/* Audio-only UI showing progress bar & time */}
+          {/* Audio progress bar & time */}
           <div style={{ marginTop: "16px" }}>
             <div onClick={seekTo} style={{ height: "4px", borderRadius: "999px", backgroundColor: "var(--palette-progress-track)", cursor: "pointer", position: "relative" }}>
               <div style={{ width: `${progress}%`, height: "100%", borderRadius: "999px", backgroundColor: "var(--palette-progress-fill)" }} />
