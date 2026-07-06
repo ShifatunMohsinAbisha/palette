@@ -25,13 +25,13 @@ export default function Music() {
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Fetch iTunes preview URLs on page load
+  // Fetch iTunes preview URLs on page load via local api proxy to prevent CORS errors
   useEffect(() => {
     const fetchPreviews = async () => {
       const updated = await Promise.all(
         initialPlaylists.map(async (track) => {
           try {
-            const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(track.query)}&entity=song&limit=1`);
+            const res = await fetch(`/api/itunes?term=${encodeURIComponent(track.query)}`);
             const data = await res.json();
             if (data.results && data.results.length > 0) {
               return {
@@ -62,7 +62,10 @@ export default function Music() {
       audio.src = trackUrl;
       audio.load();
       if (isPlaying) {
-        audio.play().catch(() => setIsPlaying(false));
+        audio.play().catch((err) => {
+          console.warn("Playback interrupted or blocked by browser autocomplete/interact rules:", err);
+          setIsPlaying(false);
+        });
       }
     } else {
       setIsPlaying(false);
@@ -77,7 +80,14 @@ export default function Music() {
       audio.pause();
       setIsPlaying(false);
     } else {
-      audio.play().catch(() => setIsPlaying(false));
+      if (!audio.src || audio.src === window.location.href) {
+        // Guard: preview URL not loaded yet
+        return;
+      }
+      audio.play().catch((err) => {
+        console.warn("Playback blocked by browser policy:", err);
+        setIsPlaying(false);
+      });
       setIsPlaying(true);
     }
   };
@@ -170,10 +180,10 @@ export default function Music() {
         <div style={{ padding: "24px", borderRadius: "20px", background: "var(--palette-gradient-music)", marginBottom: "32px", boxShadow: `0 4px 20px var(--palette-shadow-xl)` }}>
           <p style={{ fontSize: "12px", color: "var(--palette-text-secondary)", marginBottom: "8px" }}>NOW PLAYING</p>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <div style={{ width: "60px", height: "60px", borderRadius: "12px", backgroundColor: "var(--palette-surface)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px" }}>{nowPlaying.emoji}</div>
+            <div style={{ width: "60px", height: "60px", borderRadius: "12px", backgroundColor: "var(--palette-surface)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px" }}>{nowPlaying?.emoji || "🎵"}</div>
             <div style={{ flex: 1 }}>
-              <h3 style={{ fontSize: "18px", fontWeight: "700" }}>{nowPlaying.title}</h3>
-              <p style={{ fontSize: "14px", color: "var(--palette-text-secondary)" }}>{nowPlaying.artist} · {nowPlaying.duration}</p>
+              <h3 style={{ fontSize: "18px", fontWeight: "700" }}>{nowPlaying?.title || "Loading..."}</h3>
+              <p style={{ fontSize: "14px", color: "var(--palette-text-secondary)" }}>{nowPlaying?.artist || "Please wait"} · {nowPlaying?.duration || "0:30"}</p>
             </div>
             <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
               <button onClick={prevTrack} style={{ fontSize: "20px", background: "none", border: "none", cursor: "pointer" }}>⏮️</button>
