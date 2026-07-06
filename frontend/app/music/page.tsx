@@ -1,40 +1,153 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 
-const playlists = [
-  { id: 1, title: "Snowfall", artist: "Øneheart & reidenshi", mood: "Chill", color: "#DDF4FF", emoji: "❄️", duration: "2:04", spotifyId: "128v4Pq6s55q1e93tL2P0F" },
-  { id: 2, title: "Sweater Weather", artist: "The Neighbourhood", mood: "Melancholy", color: "#EAD9FF", emoji: "🌙", duration: "4:00", spotifyId: "2QjOHNrmqHkXQO8vN0qD1S" },
-  { id: 3, title: "golden hour", artist: "JVKE", mood: "Happy", color: "#FFF4C2", emoji: "☀️", duration: "3:29", spotifyId: "2FMSwJvJ75VpY3x2T9vO3t" },
-  { id: 4, title: "Glimpse of Us", artist: "Joji", mood: "Peaceful", color: "#FFD9E8", emoji: "🌸", duration: "3:57", spotifyId: "6xGruZOHh3dNqXps21o324" },
-  { id: 5, title: "Exile", artist: "Taylor Swift ft. Bon Iver", mood: "Calm", color: "#D9FBE5", emoji: "🌿", duration: "4:45", spotifyId: "4pvb0WLRcMtbPGmZjZQuyV" },
-  { id: 6, title: "Blinding Lights", artist: "The Weeknd", mood: "Energetic", color: "#EAD9FF", emoji: "💫", duration: "3:20", spotifyId: "0VjIjW4Viq3q7J5v62S2sR" },
+const initialPlaylists = [
+  { id: 1, title: "Snowfall", artist: "Øneheart & reidenshi", query: "Snowfall Øneheart", mood: "Chill", color: "#DDF4FF", emoji: "❄️", duration: "2:04" },
+  { id: 2, title: "Sweater Weather", artist: "The Neighbourhood", query: "Sweater Weather The Neighbourhood", mood: "Melancholy", color: "#EAD9FF", emoji: "🌙", duration: "4:00" },
+  { id: 3, title: "golden hour", artist: "JVKE", query: "golden hour JVKE", mood: "Happy", color: "#FFF4C2", emoji: "☀️", duration: "3:29" },
+  { id: 4, title: "Glimpse of Us", artist: "Joji", query: "Glimpse of Us Joji", mood: "Peaceful", color: "#FFD9E8", emoji: "🌸", duration: "3:57" },
+  { id: 5, title: "Exile", artist: "Taylor Swift ft. Bon Iver", query: "Exile Taylor Swift", mood: "Calm", color: "#D9FBE5", emoji: "🌿", duration: "4:45" },
+  { id: 6, title: "Blinding Lights", artist: "The Weeknd", query: "Blinding Lights The Weeknd", mood: "Energetic", color: "#EAD9FF", emoji: "💫", duration: "3:20" },
 ];
 
 const moods = ["All", "Chill", "Peaceful", "Happy", "Calm", "Energetic", "Melancholy"];
 
 export default function Music() {
+  const [tracks, setTracks] = useState(initialPlaylists.map(t => ({ ...t, url: "" })));
   const [currentTrack, setCurrentTrack] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(30);
   const [activeMood, setActiveMood] = useState("All");
+  
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Fetch iTunes preview URLs on page load
+  useEffect(() => {
+    const fetchPreviews = async () => {
+      const updated = await Promise.all(
+        initialPlaylists.map(async (track) => {
+          try {
+            const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(track.query)}&entity=song&limit=1`);
+            const data = await res.json();
+            if (data.results && data.results.length > 0) {
+              return {
+                ...track,
+                url: data.results[0].previewUrl,
+                duration: "0:30"
+              };
+            }
+          } catch (e) {
+            console.error("iTunes fetch failed for: " + track.title, e);
+          }
+          return { ...track, url: "" };
+        })
+      );
+      setTracks(updated);
+    };
+    fetchPreviews();
+  }, []);
+
+  // Handle src updates and playback when track changes
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.pause();
+    const trackUrl = tracks[currentTrack]?.url;
+    if (trackUrl) {
+      audio.src = trackUrl;
+      audio.load();
+      if (isPlaying) {
+        audio.play().catch(() => setIsPlaying(false));
+      }
+    } else {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    }
+  }, [currentTrack, tracks]);
+
+  const togglePlay = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      audio.play().catch(() => setIsPlaying(false));
+      setIsPlaying(true);
+    }
+  };
 
   const playTrack = (index: number) => {
-    setCurrentTrack(index);
+    if (currentTrack === index) {
+      togglePlay();
+    } else {
+      setCurrentTrack(index);
+      setIsPlaying(true);
+    }
   };
 
   const prevTrack = () => {
-    setCurrentTrack(prev => (prev - 1 + playlists.length) % playlists.length);
+    setCurrentTrack(prev => (prev - 1 + tracks.length) % tracks.length);
+    setIsPlaying(true);
   };
 
   const nextTrack = () => {
-    setCurrentTrack(prev => (prev + 1) % playlists.length);
+    setCurrentTrack(prev => (prev + 1) % tracks.length);
+    setIsPlaying(true);
   };
 
-  const nowPlaying = playlists[currentTrack];
-  const filtered = activeMood === "All" ? playlists : playlists.filter(s => s.mood === activeMood);
+  const seekTo = (e: React.MouseEvent<HTMLDivElement>) => {
+    const audio = audioRef.current;
+    if (!audio || !audio.duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = pct * audio.duration;
+    setCurrentTime(audio.currentTime);
+  };
+
+  const onTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  const onLoadedMetadata = () => {
+    if (audioRef.current && audioRef.current.duration) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  const onEnded = () => {
+    setIsPlaying(false);
+    setCurrentTime(0);
+    nextTrack();
+  };
+
+  const formatTime = (secs: number) => {
+    if (isNaN(secs)) return "0:00";
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? "0" : ""}${s}`;
+  };
+
+  const nowPlaying = tracks[currentTrack];
+  const filtered = activeMood === "All" ? tracks : tracks.filter(s => s.mood === activeMood);
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--palette-bg)", fontFamily: "system-ui, sans-serif" }}>
+      <audio
+        ref={audioRef}
+        onTimeUpdate={onTimeUpdate}
+        onLoadedMetadata={onLoadedMetadata}
+        onEnded={onEnded}
+        preload="metadata"
+      />
 
       <header style={{ backgroundColor: "var(--palette-nav-bg)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--palette-border)", position: "sticky", top: 0, zIndex: 50 }}>
         <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -56,7 +169,7 @@ export default function Music() {
         {/* Now Playing */}
         <div style={{ padding: "24px", borderRadius: "20px", background: "var(--palette-gradient-music)", marginBottom: "32px", boxShadow: `0 4px 20px var(--palette-shadow-xl)` }}>
           <p style={{ fontSize: "12px", color: "var(--palette-text-secondary)", marginBottom: "8px" }}>NOW PLAYING</p>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <div style={{ width: "60px", height: "60px", borderRadius: "12px", backgroundColor: "var(--palette-surface)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px" }}>{nowPlaying.emoji}</div>
             <div style={{ flex: 1 }}>
               <h3 style={{ fontSize: "18px", fontWeight: "700" }}>{nowPlaying.title}</h3>
@@ -64,20 +177,18 @@ export default function Music() {
             </div>
             <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
               <button onClick={prevTrack} style={{ fontSize: "20px", background: "none", border: "none", cursor: "pointer" }}>⏮️</button>
+              <button onClick={togglePlay} style={{ fontSize: "32px", background: "none", border: "none", cursor: "pointer" }}>{isPlaying ? "⏸️" : "▶️"}</button>
               <button onClick={nextTrack} style={{ fontSize: "20px", background: "none", border: "none", cursor: "pointer" }}>⏭️</button>
             </div>
           </div>
-          {/* Spotify Embed */}
-          <iframe
-            key={nowPlaying.spotifyId}
-            src={`https://open.spotify.com/embed/track/${nowPlaying.spotifyId}?utm_source=generator&theme=0`}
-            width="100%"
-            height="80"
-            frameBorder="0"
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            loading="lazy"
-            style={{ borderRadius: "12px" }}
-          />
+          {/* Progress Bar */}
+          <div onClick={seekTo} style={{ marginTop: "16px", height: "4px", borderRadius: "999px", backgroundColor: "var(--palette-progress-track)", cursor: "pointer", position: "relative" }}>
+            <div style={{ width: `${progress}%`, height: "100%", borderRadius: "999px", backgroundColor: "var(--palette-progress-fill)" }} />
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "var(--palette-text-secondary)", marginTop: "6px" }}>
+            <span>{formatTime(currentTime)}</span>
+            <span>{formatTime(duration)}</span>
+          </div>
         </div>
 
         {/* Mood Filter */}
@@ -96,28 +207,28 @@ export default function Music() {
         {/* Song List */}
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {filtered.map((song) => {
-            const songIndex = playlists.findIndex(p => p.id === song.id);
+            const songIndex = tracks.findIndex(p => p.id === song.id);
             const isActive = songIndex === currentTrack;
             return (
-            <div
-              key={song.id}
-              onClick={() => playTrack(songIndex)}
-              style={{ display: "flex", alignItems: "center", gap: "16px", padding: "16px", borderRadius: "16px", backgroundColor: isActive ? "var(--palette-primary)" : "var(--palette-surface)", border: `1px solid ${isActive ? "var(--palette-border-active)" : "var(--palette-border)"}`, cursor: "pointer" }}
-            >
-              <div style={{ width: "50px", height: "50px", borderRadius: "12px", backgroundColor: song.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px" }}>
-                {song.emoji}
+              <div
+                key={song.id}
+                onClick={() => playTrack(songIndex)}
+                style={{ display: "flex", alignItems: "center", gap: "16px", padding: "16px", borderRadius: "16px", backgroundColor: isActive ? "var(--palette-primary)" : "var(--palette-surface)", border: `1px solid ${isActive ? "var(--palette-border-active)" : "var(--palette-border)"}`, cursor: "pointer" }}
+              >
+                <div style={{ width: "50px", height: "50px", borderRadius: "12px", backgroundColor: song.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px" }}>
+                  {song.emoji}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: "14px", fontWeight: "600" }}>{song.title}</h3>
+                  <p style={{ fontSize: "12px", color: "var(--palette-text-muted)" }}>{song.artist}</p>
+                </div>
+                <span style={{ fontSize: "12px", color: "var(--palette-text-faint)", marginRight: "8px" }}>{song.mood}</span>
+                <span style={{ fontSize: "12px", color: "var(--palette-text-muted)" }}>{song.duration}</span>
+                <button onClick={(e) => { e.stopPropagation(); playTrack(songIndex); }} style={{ fontSize: "18px", background: "none", border: "none", cursor: "pointer" }}>
+                  {isActive && isPlaying ? "⏸️" : "▶️"}
+                </button>
               </div>
-              <div style={{ flex: 1 }}>
-                <h3 style={{ fontSize: "14px", fontWeight: "600" }}>{song.title}</h3>
-                <p style={{ fontSize: "12px", color: "var(--palette-text-muted)" }}>{song.artist}</p>
-              </div>
-              <span style={{ fontSize: "12px", color: "var(--palette-text-faint)", marginRight: "8px" }}>{song.mood}</span>
-              <span style={{ fontSize: "12px", color: "var(--palette-text-muted)" }}>{song.duration}</span>
-              <button onClick={(e) => { e.stopPropagation(); playTrack(songIndex); }} style={{ fontSize: "18px", background: "none", border: "none", cursor: "pointer" }}>
-                {isActive ? "🎧" : "▶️"}
-              </button>
-            </div>
-          );
+            );
           })}
         </div>
       </main>
