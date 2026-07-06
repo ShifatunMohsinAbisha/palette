@@ -1,95 +1,41 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 
-const initialPlaylists = [
-  { id: 1, title: "Snowfall", artist: "Øneheart & reidenshi", query: "Snowfall Øneheart", mood: "Chill", color: "#DDF4FF", emoji: "❄️", duration: "2:04" },
-  { id: 2, title: "Sweater Weather", artist: "The Neighbourhood", query: "Sweater Weather The Neighbourhood", mood: "Melancholy", color: "#EAD9FF", emoji: "🌙", duration: "4:00" },
-  { id: 3, title: "golden hour", artist: "JVKE", query: "golden hour JVKE", mood: "Happy", color: "#FFF4C2", emoji: "☀️", duration: "3:29" },
-  { id: 4, title: "Glimpse of Us", artist: "Joji", query: "Glimpse of Us Joji", mood: "Peaceful", color: "#FFD9E8", emoji: "🌸", duration: "3:57" },
-  { id: 5, title: "Exile", artist: "Taylor Swift ft. Bon Iver", query: "Exile Taylor Swift", mood: "Calm", color: "#D9FBE5", emoji: "🌿", duration: "4:45" },
-  { id: 6, title: "Blinding Lights", artist: "The Weeknd", query: "Blinding Lights The Weeknd", mood: "Energetic", color: "#EAD9FF", emoji: "💫", duration: "3:20" },
+const playlists = [
+  { id: 1, title: "Snowfall", artist: "Øneheart & reidenshi", mood: "Chill", color: "#DDF4FF", emoji: "❄️", duration: "2:04", youtubeId: "soRjcajliHE" },
+  { id: 2, title: "Sweater Weather", artist: "The Neighbourhood", mood: "Melancholy", color: "#EAD9FF", emoji: "🌙", duration: "4:00", youtubeId: "GCdwKhTtNNw" },
+  { id: 3, title: "golden hour", artist: "JVKE", mood: "Happy", color: "#FFF4C2", emoji: "☀️", duration: "3:29", youtubeId: "N_YSGP2GkAI" },
+  { id: 4, title: "Glimpse of Us", artist: "Joji", mood: "Peaceful", color: "#FFD9E8", emoji: "🌸", duration: "3:57", youtubeId: "FvOpPnKeSSQ" },
+  { id: 5, title: "Exile", artist: "Taylor Swift ft. Bon Iver", mood: "Calm", color: "#D9FBE5", emoji: "🌿", duration: "4:45", youtubeId: "osdoLjUNFnA" },
+  { id: 6, title: "Blinding Lights", artist: "The Weeknd", mood: "Energetic", color: "#EAD9FF", emoji: "💫", duration: "3:20", youtubeId: "fHI8X4OXluQ" },
+  { id: 7, title: "Can't Help Falling in Love", artist: "Elvis Presley", mood: "Calm", color: "#FFD9E8", emoji: "💖", duration: "3:00", youtubeId: "v2H4l9tLxfc" },
+  { id: 8, title: "Love Story", artist: "Taylor Swift", mood: "Happy", color: "#FFF4C2", emoji: "🏰", duration: "3:56", youtubeId: "8xg3vE8Ie_E" },
+  { id: 9, title: "All Too Well (10 Minute Version)", artist: "Taylor Swift", mood: "Melancholy", color: "#EAD9FF", emoji: "🧣", duration: "10:13", youtubeId: "s2MkiGSp3OA" },
+  { id: 10, title: "Dress", artist: "Taylor Swift", mood: "Chill", color: "#DDF4FF", emoji: "👗", duration: "5:02", youtubeId: "j2n5mRe0s54" },
+  { id: 11, title: "Chiro Adhora", artist: "Miftah Zaman", mood: "Peaceful", color: "#D9FBE5", emoji: "✨", duration: "4:12", youtubeId: "W55T-09uGZ8" },
+  { id: 12, title: "Etota Valobashi", artist: "Recall", mood: "Melancholy", color: "#EAD9FF", emoji: "🎸", duration: "4:32", youtubeId: "glN2q3AxCos" },
+  { id: 13, title: "Shoto Danar Projapoti", artist: "Arafat Mohsin", mood: "Happy", color: "#FFF4C2", emoji: "🦋", duration: "3:53", youtubeId: "U32cZrtRJN4" },
+  { id: 14, title: "Tumi", artist: "Level Five", mood: "Chill", color: "#DDF4FF", emoji: "🎤", duration: "4:05", youtubeId: "NQp3cbSkqbo" },
+  { id: 15, title: "Gangnam Style", artist: "PSY", mood: "Energetic", color: "#EAD9FF", emoji: "😎", duration: "4:13", youtubeId: "9bZkp7q19f0" },
+  { id: 16, title: "Bilionera", artist: "Otilia", mood: "Energetic", color: "#FFD9E8", emoji: "💃", duration: "3:05", youtubeId: "QH2-TGUlwu4" },
+  { id: 17, title: "TiK ToK", artist: "Kesha", mood: "Energetic", color: "#FFF4C2", emoji: "⏰", duration: "3:35", youtubeId: "iP6XpLQM2Cs" },
+  { id: 18, title: "Alien Superstar", artist: "Beyoncé", mood: "Energetic", color: "#EAD9FF", emoji: "🛸", duration: "4:35", youtubeId: "e_aT9pAGQo8" },
+  { id: 19, title: "Love Again", artist: "Dua Lipa", mood: "Happy", color: "#FFD9E8", emoji: "❤️", duration: "4:18", youtubeId: "BC19n8TZV5k" },
+  { id: 20, title: "Supercut", artist: "Lorde", mood: "Chill", color: "#DDF4FF", emoji: "🎞️", duration: "4:37", youtubeId: "p1Zt474s6m8" }
 ];
 
 const moods = ["All", "Chill", "Peaceful", "Happy", "Calm", "Energetic", "Melancholy"];
 
 export default function Music() {
-  const [tracks, setTracks] = useState(initialPlaylists.map(t => ({ ...t, url: "" })));
   const [currentTrack, setCurrentTrack] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(30);
   const [activeMood, setActiveMood] = useState("All");
-  
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // Fetch iTunes preview URLs on page load via local api proxy to prevent CORS errors
-  useEffect(() => {
-    const fetchPreviews = async () => {
-      const updated = await Promise.all(
-        initialPlaylists.map(async (track) => {
-          try {
-            const res = await fetch(`/api/itunes?term=${encodeURIComponent(track.query)}`);
-            const data = await res.json();
-            if (data.results && data.results.length > 0) {
-              return {
-                ...track,
-                url: data.results[0].previewUrl,
-                duration: "0:30"
-              };
-            }
-          } catch (e) {
-            console.error("iTunes fetch failed for: " + track.title, e);
-          }
-          return { ...track, url: "" };
-        })
-      );
-      setTracks(updated);
-    };
-    fetchPreviews();
-  }, []);
-
-  // Handle src updates and playback when track changes
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    audio.pause();
-    const trackUrl = tracks[currentTrack]?.url;
-    if (trackUrl) {
-      audio.src = trackUrl;
-      audio.load();
-      if (isPlaying) {
-        audio.play().catch((err) => {
-          console.warn("Playback interrupted or blocked by browser autocomplete/interact rules:", err);
-          setIsPlaying(false);
-        });
-      }
-    } else {
-      setIsPlaying(false);
-      setCurrentTime(0);
-    }
-  }, [currentTrack, tracks]);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const togglePlay = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-    } else {
-      if (!audio.src || audio.src === window.location.href) {
-        // Guard: preview URL not loaded yet
-        return;
-      }
-      audio.play().catch((err) => {
-        console.warn("Playback blocked by browser policy:", err);
-        setIsPlaying(false);
-      });
-      setIsPlaying(true);
-    }
+    setIsPlaying(!isPlaying);
   };
 
   const playTrack = (index: number) => {
@@ -102,62 +48,20 @@ export default function Music() {
   };
 
   const prevTrack = () => {
-    setCurrentTrack(prev => (prev - 1 + tracks.length) % tracks.length);
+    setCurrentTrack(prev => (prev - 1 + playlists.length) % playlists.length);
     setIsPlaying(true);
   };
 
   const nextTrack = () => {
-    setCurrentTrack(prev => (prev + 1) % tracks.length);
+    setCurrentTrack(prev => (prev + 1) % playlists.length);
     setIsPlaying(true);
   };
 
-  const seekTo = (e: React.MouseEvent<HTMLDivElement>) => {
-    const audio = audioRef.current;
-    if (!audio || !audio.duration) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
-    audio.currentTime = pct * audio.duration;
-    setCurrentTime(audio.currentTime);
-  };
-
-  const onTimeUpdate = () => {
-    if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
-    }
-  };
-
-  const onLoadedMetadata = () => {
-    if (audioRef.current && audioRef.current.duration) {
-      setDuration(audioRef.current.duration);
-    }
-  };
-
-  const onEnded = () => {
-    setIsPlaying(false);
-    setCurrentTime(0);
-    nextTrack();
-  };
-
-  const formatTime = (secs: number) => {
-    if (isNaN(secs)) return "0:00";
-    const m = Math.floor(secs / 60);
-    const s = Math.floor(secs % 60);
-    return `${m}:${s < 10 ? "0" : ""}${s}`;
-  };
-
-  const nowPlaying = tracks[currentTrack];
-  const filtered = activeMood === "All" ? tracks : tracks.filter(s => s.mood === activeMood);
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const nowPlaying = playlists[currentTrack];
+  const filtered = activeMood === "All" ? playlists : playlists.filter(s => s.mood === activeMood);
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--palette-bg)", fontFamily: "system-ui, sans-serif" }}>
-      <audio
-        ref={audioRef}
-        onTimeUpdate={onTimeUpdate}
-        onLoadedMetadata={onLoadedMetadata}
-        onEnded={onEnded}
-        preload="metadata"
-      />
 
       <header style={{ backgroundColor: "var(--palette-nav-bg)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--palette-border)", position: "sticky", top: 0, zIndex: 50 }}>
         <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -183,7 +87,7 @@ export default function Music() {
             <div style={{ width: "60px", height: "60px", borderRadius: "12px", backgroundColor: "var(--palette-surface)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px" }}>{nowPlaying?.emoji || "🎵"}</div>
             <div style={{ flex: 1 }}>
               <h3 style={{ fontSize: "18px", fontWeight: "700" }}>{nowPlaying?.title || "Loading..."}</h3>
-              <p style={{ fontSize: "14px", color: "var(--palette-text-secondary)" }}>{nowPlaying?.artist || "Please wait"} · {nowPlaying?.duration || "0:30"}</p>
+              <p style={{ fontSize: "14px", color: "var(--palette-text-secondary)" }}>{nowPlaying?.artist || "Please wait"} · {nowPlaying?.duration || "0:00"}</p>
             </div>
             <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
               <button onClick={prevTrack} style={{ fontSize: "20px", background: "none", border: "none", cursor: "pointer" }}>⏮️</button>
@@ -191,13 +95,17 @@ export default function Music() {
               <button onClick={nextTrack} style={{ fontSize: "20px", background: "none", border: "none", cursor: "pointer" }}>⏭️</button>
             </div>
           </div>
-          {/* Progress Bar */}
-          <div onClick={seekTo} style={{ marginTop: "16px", height: "4px", borderRadius: "999px", backgroundColor: "var(--palette-progress-track)", cursor: "pointer", position: "relative" }}>
-            <div style={{ width: `${progress}%`, height: "100%", borderRadius: "999px", backgroundColor: "var(--palette-progress-fill)" }} />
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "var(--palette-text-secondary)", marginTop: "6px" }}>
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
+          {/* YouTube Embed */}
+          <div style={{ marginTop: "16px", borderRadius: "12px", overflow: "hidden", aspectRatio: "16/9", width: "100%" }}>
+            <iframe
+              width="100%"
+              height="100%"
+              src={`https://www.youtube.com/embed/${nowPlaying?.youtubeId || ""}?autoplay=${isPlaying ? "1" : "0"}`}
+              title={nowPlaying?.title || "YouTube video player"}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           </div>
         </div>
 
@@ -217,7 +125,7 @@ export default function Music() {
         {/* Song List */}
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {filtered.map((song) => {
-            const songIndex = tracks.findIndex(p => p.id === song.id);
+            const songIndex = playlists.findIndex(p => p.id === song.id);
             const isActive = songIndex === currentTrack;
             return (
               <div
