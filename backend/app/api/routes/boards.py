@@ -23,7 +23,7 @@ class BoardResponse(BaseModel):
     cover_color: str
     cover_emoji: str
     is_private: bool
-    owner_id: int
+    owner_id: Optional[int]
     created_at: datetime
 
     class Config:
@@ -37,7 +37,7 @@ def create_board(board_data: BoardCreate, db: Session = Depends(get_db)):
         cover_color=board_data.cover_color,
         cover_emoji=board_data.cover_emoji,
         is_private=board_data.is_private,
-        owner_id=1
+        owner_id=None
     )
     db.add(new_board)
     db.commit()

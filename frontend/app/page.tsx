@@ -3,16 +3,17 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
+import { api } from "@/lib/api";
 
-const boards = [
-  { id: 1, title: "Cherry Blossom Afternoon", author: "Luna", likes: "2.3K", pins: 45, color: "#FFD9E8", emoji: "🌸" },
-  { id: 2, title: "Midnight Study Vibes", author: "Aria", likes: "1.8K", pins: 32, color: "#EAD9FF", emoji: "🌙" },
-  { id: 3, title: "Ocean Daydream", author: "Mira", likes: "3.1K", pins: 67, color: "#DDF4FF", emoji: "🌊" },
-  { id: 4, title: "Golden Hour", author: "Sol", likes: "4.2K", pins: 89, color: "#FFF4C2", emoji: "☀️" },
-  { id: 5, title: "Forest Whispers", author: "Fern", likes: "986", pins: 28, color: "#D9FBE5", emoji: "🌿" },
-  { id: 6, title: "Neon Tokyo Nights", author: "Kei", likes: "5.7K", pins: 112, color: "#EAD9FF", emoji: "🏙️" },
-  { id: 7, title: "Cottagecore Dreams", author: "Rose", likes: "2.9K", pins: 54, color: "#D9FBE5", emoji: "🌷" },
-  { id: 8, title: "Rainy Day Jazz", author: "Blue", likes: "1.2K", pins: 19, color: "#DDF4FF", emoji: "🎵" },
+const demoBoards = [
+  { id: -1, title: "Cherry Blossom Afternoon", author: "Luna", likes: "2.3K", pins: 45, color: "#FFD9E8", emoji: "🌸" },
+  { id: -2, title: "Midnight Study Vibes", author: "Aria", likes: "1.8K", pins: 32, color: "#EAD9FF", emoji: "🌙" },
+  { id: -3, title: "Ocean Daydream", author: "Mira", likes: "3.1K", pins: 67, color: "#DDF4FF", emoji: "🌊" },
+  { id: -4, title: "Golden Hour", author: "Sol", likes: "4.2K", pins: 89, color: "#FFF4C2", emoji: "☀️" },
+  { id: -5, title: "Forest Whispers", author: "Fern", likes: "986", pins: 28, color: "#D9FBE5", emoji: "🌿" },
+  { id: -6, title: "Neon Tokyo Nights", author: "Kei", likes: "5.7K", pins: 112, color: "#EAD9FF", emoji: "🏙️" },
+  { id: -7, title: "Cottagecore Dreams", author: "Rose", likes: "2.9K", pins: 54, color: "#D9FBE5", emoji: "🌷" },
+  { id: -8, title: "Rainy Day Jazz", author: "Blue", likes: "1.2K", pins: 19, color: "#DDF4FF", emoji: "🎵" },
 ];
 
 const categories = ["✨ Trending", "📌 For You", "🎵 Music", "💖 Cute", "🌸 Aesthetic", "🌿 Nature", "📚 Study", "🎮 Gaming"];
@@ -21,12 +22,27 @@ export default function Home() {
   const [greeting, setGreeting] = useState("");
   const [activeCategory, setActiveCategory] = useState("✨ Trending");
   const [liked, setLiked] = useState<number[]>([]);
+  const [apiBoards, setApiBoards] = useState<Array<{ id: number; title: string; author: string; likes: string; pins: number; color: string; emoji: string }>>([]); 
 
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting("Good Morning");
     else if (hour < 17) setGreeting("Good Afternoon");
     else setGreeting("Good Evening");
+
+    // Fetch real boards from API
+    api.getBoards().then((data) => {
+      const mapped = data.map((b: { id: number; title: string; cover_color: string; cover_emoji: string; description?: string }) => ({
+        id: b.id,
+        title: b.title,
+        author: "You",
+        likes: "0",
+        pins: 0,
+        color: b.cover_color,
+        emoji: b.cover_emoji,
+      }));
+      setApiBoards(mapped);
+    }).catch(() => {});
   }, []);
 
   const toggleLike = (id: number) => {
@@ -88,12 +104,12 @@ export default function Home() {
 
         {/* Masonry Grid */}
         <div style={{ columns: "4", gap: "16px" }}>
-          {boards.map((board) => (
+          {[...apiBoards, ...demoBoards].map((board) => (
             <div
               key={board.id}
               style={{ breakInside: "avoid", marginBottom: "16px", borderRadius: "16px", overflow: "hidden", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", boxShadow: `0 2px 12px var(--palette-shadow)`, cursor: "pointer" }}
             >
-              <div style={{ backgroundColor: board.color, height: `${140 + (board.id % 3) * 40}px`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
+              <div style={{ backgroundColor: board.color, height: `${140 + (Math.abs(board.id) % 3) * 40}px`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
                 {board.emoji}
               </div>
               <div style={{ padding: "12px" }}>

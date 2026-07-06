@@ -12,5 +12,5 @@ class Board(Base):
     cover_color = Column(String, default="#FFD9E8")
     cover_emoji = Column(String, default="🌸")
     is_private = Column(Boolean, default=False)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)

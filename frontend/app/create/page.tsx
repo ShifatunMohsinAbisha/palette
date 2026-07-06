@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
+import { api } from "@/lib/api";
 
 const emojis = ["🌸", "🌙", "🌊", "☀️", "🌿", "🏙️", "🌷", "🎵", "🎨", "🌺", "📚", "🎀", "🎧", "🌈", "🦋"];
 const colors = ["#FFD9E8", "#EAD9FF", "#DDF4FF", "#FFF4C2", "#D9FBE5", "#FFB7D5", "#CDB8FF", "#8DD7FF"];
@@ -13,6 +15,32 @@ export default function CreateBoard() {
   const [selectedColor, setSelectedColor] = useState("#FFD9E8");
   const [selectedEmoji, setSelectedEmoji] = useState("🌸");
   const [isPrivate, setIsPrivate] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleCreateBoard = async () => {
+    if (!title.trim()) {
+      setError("Please enter a board name");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      await api.createBoard({
+        title: title.trim(),
+        description: description.trim() || undefined,
+        cover_color: selectedColor,
+        cover_emoji: selectedEmoji,
+        is_private: isPrivate,
+      });
+      router.push("/profile");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create board");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--palette-bg)", fontFamily: "system-ui, sans-serif" }}>
@@ -109,10 +137,16 @@ export default function CreateBoard() {
             </button>
           </div>
 
+          {error && (
+            <p style={{ fontSize: "14px", color: "var(--palette-danger-text)", marginBottom: "8px" }}>{error}</p>
+          )}
+
           <button
-            style={{ width: "100%", padding: "14px", borderRadius: "12px", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", fontSize: "15px", fontWeight: "600", border: "none", cursor: "pointer" }}
+            onClick={handleCreateBoard}
+            disabled={loading}
+            style={{ width: "100%", padding: "14px", borderRadius: "12px", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", fontSize: "15px", fontWeight: "600", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
           >
-            Create Board 🌸
+            {loading ? "Creating..." : "Create Board 🌸"}
           </button>
         </div>
       </main>

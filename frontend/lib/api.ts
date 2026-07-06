@@ -42,4 +42,24 @@ export const api = {
     }
     return false;
   },
+
+  // Boards
+  createBoard: async (data: { title: string; description?: string; cover_color?: string; cover_emoji?: string; is_private?: boolean }) => {
+    const res = await fetch(`${API_URL}/boards/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Failed to create board");
+    }
+    return res.json();
+  },
+
+  getBoards: async () => {
+    const res = await fetch(`${API_URL}/boards/`);
+    if (!res.ok) throw new Error("Failed to fetch boards");
+    return res.json();
+  },
 };
