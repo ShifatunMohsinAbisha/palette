@@ -19,6 +19,7 @@ interface Song {
   artist: string;
   artwork_url: string | null;
   youtube_id: string;
+  preview_url: string | null;
   duration: string | null;
   mood: string | null;
   color: string | null;
@@ -46,23 +47,24 @@ interface BoardData {
 const initialPlaylists = [
   { id: 1, title: "Chemtrails Over the Country Club", artist: "Lana Del Rey", query: "Chemtrails Over the Country Club Lana Del Rey", mood: "Chill", color: "#DDF4FF", emoji: "🛩️", duration: "4:31", youtubeId: "gCw1f1GmPaU" },
   { id: 2, title: "Sweater Weather", artist: "The Neighbourhood", query: "Sweater Weather The Neighbourhood", mood: "Melancholy", color: "#EAD9FF", emoji: "🌙", duration: "4:00", youtubeId: "GCdwKhTtNNw" },
-  { id: 3, title: "Perfect", artist: "Ed Sheeran", query: "Perfect Ed Sheeran", mood: "Happy", color: "#FFF4C2", emoji: "💑", duration: "4:23", youtubeId: "2Vv-BfVoq4g" },
-  { id: 4, title: "Counting Stars", artist: "OneRepublic", query: "Counting Stars OneRepublic", mood: "Peaceful", color: "#FFD9E8", emoji: "⭐", duration: "4:17", youtubeId: "hT_nvWreIhg" },
-  { id: 5, title: "Exile", artist: "Taylor Swift ft. Bon Iver", query: "Exile Taylor Swift", mood: "Calm", color: "#D9FBE5", emoji: "🌿", duration: "4:45", youtubeId: "osdoLjUNFnA" },
-  { id: 6, title: "Blinding Lights", artist: "The Weeknd", query: "Blinding Lights The Weeknd", mood: "Energetic", color: "#EAD9FF", emoji: "💫", duration: "3:20", youtubeId: "4NRXx6U8ABQ" },
-  { id: 7, title: "Shape of You", artist: "Ed Sheeran", query: "Shape of You Ed Sheeran", mood: "Happy", color: "#FFF4C2", emoji: "🏰", duration: "3:56", youtubeId: "JGwWNGJdvx8" },
-  { id: 8, title: "Believer", artist: "Imagine Dragons", query: "Believer Imagine Dragons", mood: "Melancholy", color: "#EAD9FF", emoji: "🧣", duration: "3:24", youtubeId: "7wtfhZwyrcc" },
-  { id: 9, title: "Dress", artist: "Taylor Swift", query: "Dress Taylor Swift reputation", mood: "Chill", color: "#DDF4FF", emoji: "👗", duration: "5:02", youtubeId: "w8kzHIl0xgw" },
-  { id: 10, title: "Riptide", artist: "Vance Joy", query: "Riptide Vance Joy", mood: "Peaceful", color: "#D9FBE5", emoji: "🎻", duration: "3:24", youtubeId: "uTaL05_4a3o" },
-  { id: 11, title: "Etota Valobashi", artist: "Recall", query: "Etota Bhalobashi Recall band", mood: "Melancholy", color: "#EAD9FF", emoji: "🎸", duration: "4:32", youtubeId: "o2kw4MaBVa4" },
-  { id: 12, title: "Shoto Danar Projapoti", artist: "Arafat Mohsin", query: "Shoto Danar Projapoti Arafat Mohsin", mood: "Happy", color: "#FFF4C2", emoji: "🦋", duration: "3:53", youtubeId: "U32cZrtRJN4" },
-  { id: 13, title: "Tumi", artist: "Level Five", query: "Tumi Level Five", mood: "Chill", color: "#DDF4FF", emoji: "🎤", duration: "4:05", youtubeId: "NQp3cbSkqbo" },
-  { id: 14, title: "Gangnam Style", artist: "PSY", query: "Gangnam Style PSY", mood: "Energetic", color: "#EAD9FF", emoji: "😎", duration: "4:13", youtubeId: "9bZkp7q19f0" },
-  { id: 15, title: "Stressed Out", artist: "Twenty One Pilots", query: "Stressed Out Twenty One Pilots", mood: "Energetic", color: "#FFD9E8", emoji: "💃", duration: "3:22", youtubeId: "pXRkWzztxqU" },
-  { id: 16, title: "TiK ToK", artist: "Kesha", query: "TiK ToK Kesha", mood: "Energetic", color: "#FFF4C2", emoji: "⏰", duration: "3:35", youtubeId: "iP6XpLQM2Cs" },
-  { id: 17, title: "Alien Superstar", artist: "Beyoncé", query: "Alien Superstar Beyonce", mood: "Energetic", color: "#EAD9FF", emoji: "🛸", duration: "4:35", youtubeId: "e_aT9pAGQo8" },
-  { id: 18, title: "Love Again", artist: "Dua Lipa", query: "Love Again Dua Lipa", mood: "Happy", color: "#FFD9E8", emoji: "❤️", duration: "4:18", youtubeId: "BC19kwABFwc" },
-  { id: 19, title: "Wake Me Up", artist: "Avicii", query: "Wake Me Up Avicii", mood: "Chill", color: "#DDF4FF", emoji: "🎞️", duration: "4:09", youtubeId: "IcrbM1l_BoI" }
+  { id: 3, title: "Love", artist: "Lana Del Rey", query: "Love Lana Del Rey", mood: "Chill", color: "#FFD9E8", emoji: "💖", duration: "4:32", youtubeId: "3-NTv0CdFCk" },
+  { id: 4, title: "Anti-Hero", artist: "Taylor Swift", query: "Anti-Hero Taylor Swift", mood: "Happy", color: "#FFF4C2", emoji: "🐈", duration: "3:20", youtubeId: "b1kbLwvqugk" },
+  { id: 5, title: "Cruel Summer", artist: "Taylor Swift", query: "Cruel Summer Taylor Swift", mood: "Energetic", color: "#FFD9E8", emoji: "☀️", duration: "2:58", youtubeId: "ic8j13gFLm8" },
+  { id: 6, title: "All Too Well (Ten Minute Version)", artist: "Taylor Swift", query: "All Too Well Ten Minute Version Taylor Swift", mood: "Melancholy", color: "#EAD9FF", emoji: "🧣", duration: "10:13", youtubeId: "tollGa3S0o8" },
+  { id: 7, title: "Dress", artist: "Taylor Swift", query: "Dress Taylor Swift reputation", mood: "Chill", color: "#DDF4FF", emoji: "👗", duration: "5:02", youtubeId: "w8kzHIl0xgw" },
+  { id: 8, title: "Wildest Dreams", artist: "Taylor Swift", query: "Wildest Dreams Taylor Swift", mood: "Peaceful", color: "#D9FBE5", emoji: "💭", duration: "3:40", youtubeId: "IdneKLhsWOQ" },
+  { id: 9, title: "Etota Valobashi", artist: "Recall", query: "Etota Bhalobashi Recall band", mood: "Melancholy", color: "#EAD9FF", emoji: "🎸", duration: "4:32", youtubeId: "o2kw4MaBVa4" },
+  { id: 10, title: "Shoto Danar Projapoti", artist: "Arafat Mohsin", query: "Shoto Danar Projapoti Arafat Mohsin", mood: "Happy", color: "#FFF4C2", emoji: "🦋", duration: "3:53", youtubeId: "U32cZrtRJN4" },
+  { id: 11, title: "Tumi", artist: "Level Five", query: "Tumi Level Five", mood: "Chill", color: "#DDF4FF", emoji: "🎤", duration: "4:05", youtubeId: "NQp3cbSkqbo" },
+  { id: 12, title: "Gangnam Style", artist: "PSY", query: "Gangnam Style PSY", mood: "Energetic", color: "#EAD9FF", emoji: "😎", duration: "4:13", youtubeId: "9bZkp7q19f0" },
+  { id: 13, title: "Bilionera", artist: "Otilia", query: "Bilionera Otilia", mood: "Energetic", color: "#FFD9E8", emoji: "💃", duration: "3:05", youtubeId: "j6fKk5nK_eY" },
+  { id: 14, title: "TiK ToK", artist: "Kesha", query: "TiK ToK Kesha", mood: "Energetic", color: "#FFF4C2", emoji: "⏰", duration: "3:35", youtubeId: "iP6XpLQM2Cs" },
+  { id: 15, title: "Alien Superstar", artist: "Beyoncé", query: "Alien Superstar Beyonce", mood: "Energetic", color: "#EAD9FF", emoji: "🛸", duration: "4:35", youtubeId: "e_aT9pAGQo8" },
+  { id: 16, title: "Love Again", artist: "Dua Lipa", query: "Love Again Dua Lipa", mood: "Happy", color: "#FFD9E8", emoji: "❤️", duration: "4:18", youtubeId: "BC19kwABFwc" },
+  { id: 17, title: "Love Story", artist: "Taylor Swift", query: "Love Story Taylor Swift", mood: "Happy", color: "#FFF4C2", emoji: "🏰", duration: "3:55", youtubeId: "8xg3vE8Ie_E" },
+  { id: 18, title: "Blinding Lights", artist: "The Weeknd", query: "Blinding Lights The Weeknd", mood: "Energetic", color: "#EAD9FF", emoji: "💫", duration: "3:20", youtubeId: "4NRXx6U8ABQ" },
+  { id: 19, title: "Young and Beautiful", artist: "Lana Del Rey", query: "Young and Beautiful Lana Del Rey", mood: "Chill", color: "#DDF4FF", emoji: "🌹", duration: "3:56", youtubeId: "o_1aF54DO60" },
+  { id: 20, title: "Exile", artist: "Taylor Swift ft. Bon Iver", query: "Exile Taylor Swift", mood: "Calm", color: "#D9FBE5", emoji: "🌿", duration: "4:45", youtubeId: "osdoLjUNFnA" }
 ];
 
 const demoBoards = [
@@ -123,17 +125,7 @@ const getInitialMockData = (boardId: number) => {
   return { pins: defaultPins, songs: defaultSongs };
 };
 
-const getYoutubeId = (title: string, artist: string) => {
-  const query = `${title} ${artist}`.toLowerCase();
-  const found = initialPlaylists.find(p => 
-    p.title.toLowerCase().includes(title.toLowerCase()) || 
-    p.artist.toLowerCase().includes(artist.toLowerCase()) ||
-    query.includes(p.title.toLowerCase())
-  );
-  if (found) return found.youtubeId;
-  const index = Math.abs(query.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)) % initialPlaylists.length;
-  return initialPlaylists[index].youtubeId;
-};
+
 
 export default function BoardDetailPage() {
   const params = useParams();
@@ -166,20 +158,10 @@ export default function BoardDetailPage() {
   const [currentSongIndex, setCurrentSongIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [songDuration, setSongDuration] = useState(180);
+  const [songDuration, setSongDuration] = useState(30);
 
-  const playerRef = useRef<any>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  // Load YouTube Player script once on mount
-  useEffect(() => {
-    if (!(window as any).YT) {
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName("script")[0];
-      firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag);
-    }
-  }, []);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [searchPerformed, setSearchPerformed] = useState(false);
 
   // Fetch Board Details (or mock data)
   useEffect(() => {
@@ -205,11 +187,11 @@ export default function BoardDetailPage() {
             full_name: demo.author,
           },
           pins: mockItems.pins,
-          songs: mockItems.songs,
+          songs: mockItems.songs.map(s => ({ ...s, preview_url: null })),
         };
         setBoard(mappedData);
         setPins(mockItems.pins);
-        setSongs(mockItems.songs);
+        setSongs(mockItems.songs.map(s => ({ ...s, preview_url: null })));
         setError(false);
       } else {
         setError(true);
@@ -227,7 +209,7 @@ export default function BoardDetailPage() {
       .then((data: BoardData) => {
         setBoard(data);
         setPins(data.pins || []);
-        setSongs(data.songs || []);
+        setSongs((data.songs || []).map((s: Song) => ({ ...s, preview_url: s.preview_url || null })));
         setError(false);
       })
       .catch(() => {
@@ -238,91 +220,83 @@ export default function BoardDetailPage() {
       });
   }, [id]);
 
-  // YouTube Audio Iframe Setup
+  // Audio playback: play/pause/load when currentSongIndex or isPlaying changes
   useEffect(() => {
-    if (songs.length === 0 || currentSongIndex === null) return;
+    if (currentSongIndex === null || songs.length === 0) return;
     const activeSong = songs[currentSongIndex];
     if (!activeSong) return;
 
-    const initPlayer = () => {
-      const YT = (window as any).YT;
-      if (YT && YT.Player && containerRef.current) {
-        if (playerRef.current) {
-          playerRef.current.destroy();
-        }
-        containerRef.current.innerHTML = "";
-        const playerDiv = document.createElement("div");
-        playerDiv.id = "yt-board-player";
-        containerRef.current.appendChild(playerDiv);
+    let isCancelled = false;
 
-        playerRef.current = new YT.Player("yt-board-player", {
-          height: "1",
-          width: "1",
-          videoId: activeSong.youtube_id,
-          playerVars: {
-            autoplay: 1,
-            controls: 0,
-            disablekb: 1,
-            fs: 0,
-            modestbranding: 1,
-            rel: 0,
-            showinfo: 0,
-          },
-          events: {
-            onReady: (event: any) => {
-              setIsPlaying(true);
-              event.target.playVideo();
-            },
-            onStateChange: (event: any) => {
-              if (event.data === 0) {
-                // Track finished, auto-advance
-                nextSong();
-              }
-            },
-          },
+    const playActiveTrack = async () => {
+      let audioSrc = activeSong.preview_url;
+
+      if (!audioSrc) {
+        try {
+          const query = `${activeSong.title} ${activeSong.artist}`;
+          const res = await fetch(`/api/itunes?term=${encodeURIComponent(query)}`);
+          const data = await res.json();
+          if (!isCancelled && data.results && data.results.length > 0) {
+            audioSrc = data.results[0].previewUrl || null;
+            activeSong.preview_url = audioSrc;
+            if (!activeSong.artwork_url) {
+              activeSong.artwork_url = data.results[0].artworkUrl100?.replace("100x100", "300x300") || null;
+            }
+          }
+        } catch (e) {
+          console.error("Audio preview fetch error:", e);
+        }
+      }
+
+      if (isCancelled || !audioSrc) return;
+
+      if (!audioRef.current) {
+        audioRef.current = new Audio();
+        audioRef.current.addEventListener("ended", () => {
+          setCurrentSongIndex(prev => {
+            if (prev === null) return null;
+            return (prev + 1) % songs.length;
+          });
+        });
+        audioRef.current.addEventListener("timeupdate", () => {
+          if (audioRef.current) {
+            setCurrentTime(audioRef.current.currentTime);
+          }
+        });
+        audioRef.current.addEventListener("loadedmetadata", () => {
+          if (audioRef.current) {
+            setSongDuration(audioRef.current.duration || 30);
+          }
         });
       }
-    };
 
-    const checkYT = () => {
-      const YT = (window as any).YT;
-      if (YT && YT.Player) {
-        initPlayer();
+      if (audioRef.current.src !== audioSrc) {
+        audioRef.current.src = audioSrc;
+        audioRef.current.load();
+      }
+
+      if (isPlaying) {
+        audioRef.current.play().catch(() => {});
       } else {
-        setTimeout(checkYT, 100);
+        audioRef.current.pause();
       }
     };
-    checkYT();
+
+    playActiveTrack();
 
     return () => {
-      // Keep player intact to avoid rebuild on minor re-renders, but clean up video source
+      isCancelled = true;
     };
-  }, [currentSongIndex]);
+  }, [currentSongIndex, isPlaying, songs]);
 
-  // Sync play state to YouTube player
+  // Cleanup audio on unmount
   useEffect(() => {
-    const player = playerRef.current;
-    if (player) {
-      if (isPlaying) {
-        if (typeof player.playVideo === "function") player.playVideo();
-      } else {
-        if (typeof player.pauseVideo === "function") player.pauseVideo();
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
       }
-    }
-  }, [isPlaying]);
-
-  // Progress Bar timer
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const player = playerRef.current;
-      if (player && typeof player.getCurrentTime === "function" && typeof player.getDuration === "function") {
-        const time = player.getCurrentTime() || 0;
-        const dur = player.getDuration() || 0;
-        setCurrentTime(time);
-        if (dur) setSongDuration(dur);
-      }
-    }, 500);
-    return () => clearInterval(interval);
+    };
   }, []);
 
   const togglePlay = () => {
@@ -351,12 +325,12 @@ export default function BoardDetailPage() {
   };
 
   const seekTo = (e: React.MouseEvent<HTMLDivElement>) => {
-    const player = playerRef.current;
-    if (!player || typeof player.seekTo !== "function" || !songDuration) return;
+    const audio = audioRef.current;
+    if (!audio || !songDuration) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const pct = (e.clientX - rect.left) / rect.width;
     const seconds = pct * songDuration;
-    player.seekTo(seconds, true);
+    audio.currentTime = seconds;
     setCurrentTime(seconds);
   };
 
@@ -460,48 +434,43 @@ export default function BoardDetailPage() {
     }
   };
 
-  // iTunes Song Search
-  const handleSearchSongs = async () => {
-    if (!songSearchQuery.trim()) return;
-    setSearchingSongs(true);
+  // Add Song Function from Preset Music List
+  const handleAddSong = async (presetTrack: typeof initialPlaylists[0]) => {
+    const boardId = Number(id);
+    let artworkUrl: string | null = null;
+    let previewUrl: string | null = null;
+
     try {
-      const res = await fetch(`/api/itunes?term=${encodeURIComponent(songSearchQuery)}`);
+      const res = await fetch(`/api/itunes?term=${encodeURIComponent(presetTrack.query)}`);
       const data = await res.json();
-      setSongSearchResults(data.results || []);
+      if (data.results && data.results.length > 0) {
+        artworkUrl = data.results[0].artworkUrl100?.replace("100x100", "300x300") || null;
+        previewUrl = data.results[0].previewUrl || null;
+      }
     } catch (e) {
       console.error(e);
-    } finally {
-      setSearchingSongs(false);
     }
-  };
-
-  // Add Song Function
-  const handleAddSong = async (itunesSong: any) => {
-    const boardId = Number(id);
-    const durationSecs = itunesSong.trackTimeMillis ? Math.round(itunesSong.trackTimeMillis / 1000) : 200;
-    const durationStr = formatTime(durationSecs);
-    const ytId = getYoutubeId(itunesSong.trackName, itunesSong.artistName);
 
     const newSongBody = {
-      title: itunesSong.trackName,
-      artist: itunesSong.artistName,
-      artwork_url: itunesSong.artworkUrl100 || null,
-      youtube_id: ytId,
-      duration: durationStr,
-      mood: "Aesthetic",
-      color: "#FFD9E8",
-      emoji: "🎵",
+      title: presetTrack.title,
+      artist: presetTrack.artist,
+      artwork_url: artworkUrl,
+      youtube_id: presetTrack.youtubeId,
+      duration: presetTrack.duration,
+      mood: presetTrack.mood,
+      color: presetTrack.color,
+      emoji: presetTrack.emoji,
     };
 
     if (boardId < 0) {
       const newSong: Song = {
         id: -Date.now(),
         ...newSongBody,
+        preview_url: previewUrl,
         position: songs.length,
       };
       setSongs([...songs, newSong]);
       setShowAddSong(false);
-      setSongSearchResults([]);
       setSongSearchQuery("");
       return;
     }
@@ -514,9 +483,8 @@ export default function BoardDetailPage() {
       });
       if (!res.ok) throw new Error("Failed to add song");
       const addedSong: Song = await res.json();
-      setSongs([...songs, addedSong]);
+      setSongs([...songs, { ...addedSong, preview_url: previewUrl }]);
       setShowAddSong(false);
-      setSongSearchResults([]);
       setSongSearchQuery("");
     } catch (e) {
       console.error(e);
@@ -532,8 +500,9 @@ export default function BoardDetailPage() {
     if (deletedIndex === currentSongIndex) {
       setIsPlaying(false);
       setCurrentSongIndex(null);
-      if (playerRef.current && typeof playerRef.current.stopVideo === "function") {
-        playerRef.current.stopVideo();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
       }
     } else if (currentSongIndex !== null && deletedIndex < currentSongIndex) {
       setCurrentSongIndex(currentSongIndex - 1);
@@ -723,8 +692,7 @@ export default function BoardDetailPage() {
                               backgroundColor: "var(--palette-surface)", 
                               border: "1px solid var(--palette-border)", 
                               boxShadow: "0 2px 8px var(--palette-shadow)", 
-                              position: "relative",
-                              group: "true"
+                              position: "relative"
                             }}
                           >
                             <img 
@@ -928,7 +896,7 @@ export default function BoardDetailPage() {
                           </div>
 
                           <span style={{ fontSize: "12px", color: "var(--palette-text-muted)", marginRight: "12px" }}>{song.duration || "3:00"}</span>
-                          <button onClick={(e) => { e.stopPropagation(); removeSong(song.id); }} style={{ padding: "6px 12px", borderRadius: "8px", border: "none", backgroundColor: "#ff4d4d", color: "white", cursor: "pointer", fontSize: "12px", fontWeight: "600", marginRight: "8px" }}>Remove</button>
+                          <button onClick={(e) => { e.stopPropagation(); handleRemoveSong(song.id); }} style={{ padding: "6px 12px", borderRadius: "8px", border: "none", backgroundColor: "#ff4d4d", color: "white", cursor: "pointer", fontSize: "12px", fontWeight: "600", marginRight: "8px" }}>Remove</button>
                           <button style={{ fontSize: "18px", background: "none", border: "none", cursor: "pointer" }}>
                             {isSongPlaying ? "⏸️" : "▶️"}
                           </button>
@@ -988,12 +956,6 @@ export default function BoardDetailPage() {
               <span>{formatTime(songDuration)}</span>
             </div>
           </div>
-
-          {/* Hidden YouTube Iframe Player container */}
-          <div 
-            ref={containerRef}
-            style={{ position: "fixed", top: "-9999px", width: "1px", height: "1px", overflow: "hidden", pointerEvents: "none" }} 
-          />
         </div>
       )}
 
@@ -1086,7 +1048,7 @@ export default function BoardDetailPage() {
       {showAddSong && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 150 }}>
           <div style={{ backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", borderRadius: "24px", padding: "32px", width: "90%", maxWidth: "500px", display: "flex", flexDirection: "column", gap: "18px", maxHeight: "80vh", boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}>
-            <h3 style={{ fontSize: "20px", fontWeight: "700", margin: 0 }}>Search & Add Track 🎵</h3>
+            <h3 style={{ fontSize: "20px", fontWeight: "700", margin: 0 }}>Select & Add Track 🎵</h3>
             
             <div style={{ display: "flex", gap: "8px" }}>
               <input 
@@ -1094,37 +1056,38 @@ export default function BoardDetailPage() {
                 placeholder="Search song title or artist..." 
                 value={songSearchQuery} 
                 onChange={e => setSongSearchQuery(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && handleSearchSongs()}
                 style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1px solid var(--palette-border)", backgroundColor: "var(--palette-input-bg)", color: "var(--palette-text)", fontSize: "14px", outline: "none" }}
               />
-              <button 
-                onClick={handleSearchSongs}
-                style={{ padding: "10px 18px", borderRadius: "12px", border: "none", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", cursor: "pointer", fontSize: "13px", fontWeight: "600" }}
-              >
-                {searchingSongs ? "..." : "Search"}
-              </button>
             </div>
 
             {/* Results Box */}
-            <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "8px", maxHeight: "300px", paddingRight: "4px" }}>
-              {songSearchResults.length === 0 ? (
+            <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "8px", maxHeight: "320px", paddingRight: "4px" }}>
+              {initialPlaylists.filter(s =>
+                s.title.toLowerCase().includes(songSearchQuery.toLowerCase()) ||
+                s.artist.toLowerCase().includes(songSearchQuery.toLowerCase())
+              ).length === 0 ? (
                 <p style={{ textAlign: "center", fontSize: "13px", color: "var(--palette-text-faint)", margin: "40px 0" }}>
-                  {searchingSongs ? "Searching..." : "No search results yet. Type above!"}
+                  No songs found
                 </p>
               ) : (
-                songSearchResults.map((track: any) => (
+                initialPlaylists.filter(s =>
+                  s.title.toLowerCase().includes(songSearchQuery.toLowerCase()) ||
+                  s.artist.toLowerCase().includes(songSearchQuery.toLowerCase())
+                ).map((track) => (
                   <div 
-                    key={track.trackId} 
-                    style={{ display: "flex", alignItems: "center", gap: "12px", padding: "8px 12px", borderRadius: "12px", border: "1px solid var(--palette-border)", backgroundColor: "var(--palette-bg)" }}
+                    key={track.id} 
+                    style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 14px", borderRadius: "12px", border: "1px solid var(--palette-border)", backgroundColor: "var(--palette-bg)" }}
                   >
-                    <img src={track.artworkUrl100} alt={track.trackName} style={{ width: "40px", height: "40px", borderRadius: "6px", objectFit: "cover" }} />
+                    <div style={{ width: "40px", height: "40px", borderRadius: "8px", backgroundColor: track.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", flexShrink: 0 }}>
+                      {track.emoji}
+                    </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <h4 style={{ fontSize: "12px", fontWeight: "700", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{track.trackName}</h4>
-                      <p style={{ fontSize: "10px", color: "var(--palette-text-secondary)", margin: "2px 0 0 0" }}>{track.artistName}</p>
+                      <h4 style={{ fontSize: "13px", fontWeight: "700", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{track.title}</h4>
+                      <p style={{ fontSize: "11px", color: "var(--palette-text-secondary)", margin: "2px 0 0 0" }}>{track.artist} · {track.duration}</p>
                     </div>
                     <button 
                       onClick={() => handleAddSong(track)}
-                      style={{ padding: "6px 12px", borderRadius: "999px", border: "none", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", cursor: "pointer", fontSize: "11px", fontWeight: "600" }}
+                      style={{ padding: "6px 14px", borderRadius: "999px", border: "none", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", cursor: "pointer", fontSize: "12px", fontWeight: "600" }}
                     >
                       + Add
                     </button>
@@ -1135,7 +1098,7 @@ export default function BoardDetailPage() {
 
             <div style={{ display: "flex", justifyContent: "flex-end", borderTop: "1px solid var(--palette-border)", paddingTop: "12px" }}>
               <button 
-                onClick={() => { setShowAddSong(false); setSongSearchResults([]); setSongSearchQuery(""); }}
+                onClick={() => { setShowAddSong(false); setSongSearchQuery(""); }}
                 style={{ padding: "8px 16px", borderRadius: "999px", border: "1px solid var(--palette-border)", backgroundColor: "transparent", color: "var(--palette-text-secondary)", cursor: "pointer", fontSize: "13px", fontWeight: "600" }}
               >
                 Close

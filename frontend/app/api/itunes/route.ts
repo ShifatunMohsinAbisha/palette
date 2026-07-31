@@ -9,7 +9,7 @@ export async function GET(request: Request) {
 
   try {
     const res = await fetch(
-      `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=song&limit=1`
+      `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=song&limit=10`
     );
     const data = await res.json();
     return NextResponse.json(data);
