@@ -68,4 +68,30 @@ export const api = {
     if (!res.ok) throw new Error("Failed to fetch board");
     return res.json();
   },
+
+  // Profile
+  getProfile: async () => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const res = await fetch(`${API_URL}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Failed to fetch profile");
+    return res.json();
+  },
+
+  updateProfile: async (data: { username?: string; full_name?: string; bio?: string; avatar_url?: string }) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const res = await fetch(`${API_URL}/auth/me`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Failed to update profile");
+    }
+    return res.json();
+  },
 };
