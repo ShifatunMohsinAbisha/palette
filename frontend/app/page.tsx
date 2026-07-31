@@ -6,22 +6,29 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { api } from "@/lib/api";
 
 const demoBoards = [
-  { id: -1, title: "Cherry Blossom Afternoon", author: "Luna", likes: "2.3K", pins: 45, color: "#FFD9E8", emoji: "🌸" },
-  { id: -2, title: "Midnight Study Vibes", author: "Aria", likes: "1.8K", pins: 32, color: "#EAD9FF", emoji: "🌙" },
-  { id: -3, title: "Ocean Daydream", author: "Mira", likes: "3.1K", pins: 67, color: "#DDF4FF", emoji: "🌊" },
-  { id: -4, title: "Golden Hour", author: "Sol", likes: "4.2K", pins: 89, color: "#FFF4C2", emoji: "☀️" },
-  { id: -5, title: "Forest Whispers", author: "Fern", likes: "986", pins: 28, color: "#D9FBE5", emoji: "🌿" },
-  { id: -6, title: "Neon Tokyo Nights", author: "Kei", likes: "5.7K", pins: 112, color: "#EAD9FF", emoji: "🏙️" },
-  { id: -7, title: "Cottagecore Dreams", author: "Rose", likes: "2.9K", pins: 54, color: "#D9FBE5", emoji: "🌷" },
-  { id: -8, title: "Rainy Day Jazz", author: "Blue", likes: "1.2K", pins: 19, color: "#DDF4FF", emoji: "🎵" },
+  { id: -1, title: "Cherry Blossom Afternoon", author: "Luna", likes: "2.3K", pins: 45, color: "#FFD9E8", emoji: "🌸", category: "Aesthetic" },
+  { id: -2, title: "Midnight Study Vibes", author: "Aria", likes: "1.8K", pins: 32, color: "#EAD9FF", emoji: "🌙", category: "Study" },
+  { id: -3, title: "Ocean Daydream", author: "Mira", likes: "3.1K", pins: 67, color: "#DDF4FF", emoji: "🌊", category: "Nature" },
+  { id: -4, title: "Golden Hour", author: "Sol", likes: "4.2K", pins: 89, color: "#FFF4C2", emoji: "☀️", category: "Aesthetic" },
+  { id: -5, title: "Forest Whispers", author: "Fern", likes: "986", pins: 28, color: "#D9FBE5", emoji: "🌿", category: "Nature" },
+  { id: -6, title: "Neon Tokyo Nights", author: "Kei", likes: "5.7K", pins: 112, color: "#EAD9FF", emoji: "🏙️", category: "Gaming" },
+  { id: -7, title: "Cottagecore Dreams", author: "Rose", likes: "2.9K", pins: 54, color: "#D9FBE5", emoji: "🌷", category: "Cute" },
+  { id: -8, title: "Rainy Day Jazz", author: "Blue", likes: "1.2K", pins: 19, color: "#DDF4FF", emoji: "🎵", category: "Music" },
 ];
 
 const categories = ["✨ Trending", "📌 For You", "🎵 Music", "💖 Cute", "🌸 Aesthetic", "🌿 Nature", "📚 Study", "🎮 Gaming"];
 
+function parseLikes(likes: string): number {
+  const str = likes.trim().toUpperCase();
+  if (str.endsWith("K")) return parseFloat(str) * 1000;
+  if (str.endsWith("M")) return parseFloat(str) * 1000000;
+  return parseFloat(str) || 0;
+}
+
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("✨ Trending");
   const [liked, setLiked] = useState<number[]>([]);
-  const [apiBoards, setApiBoards] = useState<Array<{ id: number; title: string; author: string; likes: string; pins: number; color: string; emoji: string }>>([]); 
+  const [apiBoards, setApiBoards] = useState<Array<{ id: number; title: string; author: string; likes: string; pins: number; color: string; emoji: string; category: string }>>([]);
 
   useEffect(() => {
     // Fetch real boards from API
@@ -34,6 +41,7 @@ export default function Home() {
         pins: 0,
         color: b.cover_color,
         emoji: b.cover_emoji,
+        category: "",
       }));
       setApiBoards(mapped);
     }).catch(() => {});
@@ -44,6 +52,23 @@ export default function Home() {
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
   };
+
+  // Derive the category label (strip emoji prefix) from the active pill
+  const activeCategoryLabel = activeCategory.replace(/^[^\s]+\s/, "");
+
+  // Filter and sort boards based on active category
+  const allBoards = [...apiBoards, ...demoBoards];
+  const filteredBoards = (() => {
+    if (activeCategoryLabel === "Trending") {
+      return [...allBoards].sort((a, b) => parseLikes(b.likes) - parseLikes(a.likes));
+    }
+    if (activeCategoryLabel === "For You") {
+      return allBoards;
+    }
+    return allBoards.filter(
+      (board) => board.category.toLowerCase() === activeCategoryLabel.toLowerCase()
+    );
+  })();
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--palette-bg)", color: "var(--palette-text)", fontFamily: "system-ui, sans-serif" }}>
@@ -86,9 +111,10 @@ export default function Home() {
                 fontWeight: "500",
                 whiteSpace: "nowrap",
                 cursor: "pointer",
-                backgroundColor: activeCategory === cat ? "var(--palette-primary)" : "var(--palette-surface)",
-                border: `1px solid ${activeCategory === cat ? "var(--palette-border-active)" : "var(--palette-border-subtle)"}`,
-                color: activeCategory === cat ? "var(--palette-text)" : "var(--palette-text-secondary)",
+                backgroundColor: activeCategory === cat ? "var(--palette-pink)" : "var(--palette-surface)",
+                border: `1px solid ${activeCategory === cat ? "var(--palette-pink)" : "var(--palette-border-subtle)"}`,
+                color: activeCategory === cat ? "#fff" : "var(--palette-text-secondary)",
+                transition: "all 0.2s ease",
               }}
             >
               {cat}
@@ -98,7 +124,7 @@ export default function Home() {
 
         {/* Masonry Grid */}
         <div style={{ columns: "4", gap: "16px" }}>
-          {[...apiBoards, ...demoBoards].map((board) => (
+          {filteredBoards.map((board) => (
             <Link
               key={board.id}
               href={`/boards/${board.id}`}
