@@ -87,19 +87,59 @@ export default function Profile() {
     });
   }, []);
 
-  const handleAvatarUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result as string;
-      if (profile) {
-        const updated = { ...profile, avatar_url: dataUrl };
-        setProfile(updated);
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        const canvas = document.createElement("canvas");
+        const MAX_SIZE = 100;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height = Math.round((height * MAX_SIZE) / width);
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width = Math.round((width * MAX_SIZE) / height);
+            height = MAX_SIZE;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve(objectUrl);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", 0.5));
+      };
+      img.onerror = () => {
+        resolve(objectUrl);
+      };
+      img.src = objectUrl;
+    });
+  };
+
+  const handleAvatarUpload = async (file: File) => {
+    const dataUrl = await compressImage(file);
+    if (profile) {
+      const updated = { ...profile, avatar_url: dataUrl };
+      setProfile(updated);
+      try {
         localStorage.setItem("palette_profile", JSON.stringify(updated));
-        // Try to save to API too
-        api.updateProfile({ avatar_url: dataUrl }).catch(() => {});
+      } catch {
+        /* ignore storage error */
       }
-    };
-    reader.readAsDataURL(file);
+      // Try to save to API too
+      api.updateProfile({ avatar_url: dataUrl }).catch(() => {});
+    }
   };
 
   const handleAvatarClick = () => {
@@ -116,12 +156,9 @@ export default function Profile() {
     setShowEditModal(true);
   };
 
-  const handleModalAvatarUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setEditAvatar(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
+  const handleModalAvatarUpload = async (file: File) => {
+    const dataUrl = await compressImage(file);
+    setEditAvatar(dataUrl);
   };
 
   const handleSaveProfile = async () => {
@@ -137,7 +174,11 @@ export default function Profile() {
     try {
       const updated = await api.updateProfile(updates);
       setProfile(updated);
-      localStorage.setItem("palette_profile", JSON.stringify(updated));
+      try {
+        localStorage.setItem("palette_profile", JSON.stringify(updated));
+      } catch {
+        /* ignore storage error */
+      }
       setShowEditModal(false);
     } catch {
       // Fallback: save locally even if API fails
@@ -148,7 +189,11 @@ export default function Profile() {
         avatar_url: editAvatar,
       };
       setProfile(updated);
-      localStorage.setItem("palette_profile", JSON.stringify(updated));
+      try {
+        localStorage.setItem("palette_profile", JSON.stringify(updated));
+      } catch {
+        /* ignore storage error */
+      }
       setShowEditModal(false);
     }
     setSaving(false);
