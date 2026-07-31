@@ -24,8 +24,13 @@ const categories = ["All", "Aesthetic", "Study", "Nature", "Music", "Cute", "Gam
 export default function Explore() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [liked, setLiked] = useState<number[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const filtered = activeCategory === "All" ? exploreBoards : exploreBoards.filter(b => b.category === activeCategory);
+  const filtered = exploreBoards.filter(b => {
+    const matchesCategory = activeCategory === "All" || b.category === activeCategory;
+    const matchesSearch = searchQuery.trim() === "" || b.title.toLowerCase().includes(searchQuery.trim().toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const toggleLike = (id: number) => {
     setLiked(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
@@ -41,6 +46,8 @@ export default function Explore() {
           <input
             type="text"
             placeholder="🔍 Search boards, moods, music..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             style={{ flex: 1, maxWidth: "500px", padding: "10px 20px", borderRadius: "999px", border: "none", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", fontSize: "14px", outline: "none" }}
           />
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -81,40 +88,48 @@ export default function Explore() {
         </div>
 
         {/* Grid */}
-        <div style={{ columns: "4", gap: "16px" }}>
-          {filtered.map((board) => (
-            <Link
-              key={board.id}
-              href={`/boards/${board.id}`}
-              style={{ display: "block", textDecoration: "none", color: "inherit", breakInside: "avoid", marginBottom: "16px" }}
-            >
-              <div
-                style={{ borderRadius: "16px", overflow: "hidden", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", boxShadow: `0 2px 12px var(--palette-shadow)`, cursor: "pointer" }}
+        {filtered.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "60px 20px" }}>
+            <p style={{ fontSize: "48px", marginBottom: "12px" }}>🔍</p>
+            <p style={{ fontSize: "16px", fontWeight: "600", color: "var(--palette-text)" }}>No boards found</p>
+            <p style={{ fontSize: "13px", color: "var(--palette-text-muted)", marginTop: "4px" }}>Try a different search or category</p>
+          </div>
+        ) : (
+          <div style={{ columns: "4", gap: "16px" }}>
+            {filtered.map((board) => (
+              <Link
+                key={board.id}
+                href={`/boards/${board.id}`}
+                style={{ display: "block", textDecoration: "none", color: "inherit", breakInside: "avoid", marginBottom: "16px" }}
               >
-                <div style={{ backgroundColor: board.color, height: `${140 + (board.id % 3) * 40}px`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
-                  {board.emoji}
-                </div>
-                <div style={{ padding: "12px" }}>
-                  <h3 style={{ fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>{board.title}</h3>
-                  <p style={{ fontSize: "12px", color: "var(--palette-text-muted)", marginBottom: "8px" }}>by {board.author} · {board.pins} pins</p>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: "12px", color: "var(--palette-text-faint)" }}>♫ Snowfall</span>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        toggleLike(board.id);
-                      }}
-                      style={{ fontSize: "13px", background: "none", border: "none", cursor: "pointer" }}
-                    >
-                      {liked.includes(board.id) ? "❤️" : "🤍"} {board.likes}
-                    </button>
+                <div
+                  style={{ borderRadius: "16px", overflow: "hidden", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", boxShadow: `0 2px 12px var(--palette-shadow)`, cursor: "pointer" }}
+                >
+                  <div style={{ backgroundColor: board.color, height: `${140 + (board.id % 3) * 40}px`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
+                    {board.emoji}
+                  </div>
+                  <div style={{ padding: "12px" }}>
+                    <h3 style={{ fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>{board.title}</h3>
+                    <p style={{ fontSize: "12px", color: "var(--palette-text-muted)", marginBottom: "8px" }}>by {board.author} · {board.pins} pins</p>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: "12px", color: "var(--palette-text-faint)" }}>♫ Snowfall</span>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleLike(board.id);
+                        }}
+                        style={{ fontSize: "13px", background: "none", border: "none", cursor: "pointer" }}
+                      >
+                        {liked.includes(board.id) ? "❤️" : "🤍"} {board.likes}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </main>
 
       {/* Bottom Navigation */}
