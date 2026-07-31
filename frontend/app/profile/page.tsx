@@ -36,6 +36,18 @@ export default function Profile() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const modalFileInputRef = useRef<HTMLInputElement>(null);
 
+  const deleteBoard = async (boardId: number) => {
+    const confirmed = window.confirm("Are you sure you want to delete this board?");
+    if (!confirmed) return;
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/boards/${boardId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      setBoards(prev => prev.filter(b => b.id !== boardId));
+    } catch {
+      alert("Failed to delete board. Please try again.");
+    }
+  };
+
   // Load profile from API or localStorage fallback
   useEffect(() => {
     api.getBoards().then((data) => {
@@ -262,21 +274,44 @@ export default function Profile() {
         )}
         <div style={{ columns: "4", gap: "16px" }}>
           {boards.map((board) => (
-            <Link
-              key={board.id}
-              href={`/boards/${board.id}`}
-              style={{ display: "block", textDecoration: "none", color: "inherit", breakInside: "avoid", marginBottom: "16px" }}
-            >
-              <div style={{ borderRadius: "16px", overflow: "hidden", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", cursor: "pointer" }}>
-                <div style={{ backgroundColor: board.color, height: "140px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
-                  {board.emoji}
+            <div key={board.id} style={{ breakInside: "avoid", marginBottom: "16px", position: "relative" }}>
+              <Link
+                href={`/boards/${board.id}`}
+                style={{ display: "block", textDecoration: "none", color: "inherit" }}
+              >
+                <div style={{ borderRadius: "16px", overflow: "hidden", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", cursor: "pointer" }}>
+                  <div style={{ backgroundColor: board.color, height: "140px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px" }}>
+                    {board.emoji}
+                  </div>
+                  <div style={{ padding: "12px" }}>
+                    <h3 style={{ fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>{board.title}</h3>
+                    <p style={{ fontSize: "12px", color: "var(--palette-text-muted)" }}>{board.pins} pins</p>
+                  </div>
                 </div>
-                <div style={{ padding: "12px" }}>
-                  <h3 style={{ fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>{board.title}</h3>
-                  <p style={{ fontSize: "12px", color: "var(--palette-text-muted)" }}>{board.pins} pins</p>
-                </div>
-              </div>
-            </Link>
+              </Link>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  deleteBoard(board.id);
+                }}
+                style={{
+                  position: "absolute", top: "8px", right: "8px",
+                  width: "32px", height: "32px", borderRadius: "50%",
+                  backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)",
+                  border: "none", cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "14px", color: "white",
+                  transition: "background-color 0.2s",
+                  zIndex: 2,
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.8)")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.5)")}
+                title="Delete board"
+              >
+                🗑️
+              </button>
+            </div>
           ))}
         </div>
       </main>

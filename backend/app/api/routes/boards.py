@@ -176,3 +176,15 @@ def rearrange_songs(board_id: int, req: RearrangeRequest, db: Session = Depends(
         db.query(Song).filter(Song.id == song_id, Song.board_id == board_id).update({"position": index})
     db.commit()
     return {"status": "success"}
+
+@router.delete("/{board_id}")
+def delete_board(board_id: int, db: Session = Depends(get_db)):
+    board = db.query(Board).filter(Board.id == board_id).first()
+    if not board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    # Delete associated pins and songs first
+    db.query(Pin).filter(Pin.board_id == board_id).delete()
+    db.query(Song).filter(Song.board_id == board_id).delete()
+    db.delete(board)
+    db.commit()
+    return {"status": "success"}
