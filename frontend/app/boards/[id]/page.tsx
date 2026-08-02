@@ -572,7 +572,7 @@ export default function BoardDetailPage() {
       
       {/* Top Header */}
       <header style={{ backgroundColor: "var(--palette-nav-bg)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--palette-border)", position: "sticky", top: 0, zIndex: 50, width: "100%" }}>
-        <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="responsive-header" style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <button 
             onClick={() => router.back()} 
             style={{ background: "none", border: "none", color: "var(--palette-text)", fontSize: "16px", fontWeight: "600", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}
@@ -588,7 +588,7 @@ export default function BoardDetailPage() {
       </header>
 
       {/* Main Container */}
-      <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "24px" }}>
+      <main className="responsive-main" style={{ maxWidth: "1200px", margin: "0 auto" }}>
         
         {loading ? (
           <div style={{ textAlign: "center", padding: "80px 0", color: "var(--palette-text-muted)" }}>
@@ -607,7 +607,7 @@ export default function BoardDetailPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
             
             {/* Board Banner */}
-            <div style={{ backgroundColor: board.cover_color, height: "180px", borderRadius: "24px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "64px", boxShadow: "0 4px 16px var(--palette-shadow)", position: "relative" }}>
+            <div className="responsive-banner" style={{ backgroundColor: board.cover_color, borderRadius: "24px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px var(--palette-shadow)", position: "relative" }}>
               <div style={{ position: "absolute", bottom: "-28px", backgroundColor: "var(--palette-surface)", padding: "12px 24px", borderRadius: "999px", border: "1px solid var(--palette-border)", boxShadow: "0 2px 10px var(--palette-shadow)", fontSize: "13px", fontWeight: "600", color: "var(--palette-text-secondary)" }}>
                 by @{board.owner?.username || "abisha"} · {board.is_private ? "🔒 Private" : "🌐 Public"} · {new Date(board.created_at).toLocaleDateString()}
               </div>
@@ -623,7 +623,7 @@ export default function BoardDetailPage() {
             </div>
 
             {/* Grid Tabs & Controller Panel */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid var(--palette-border)", paddingBottom: "12px", flexWrap: "wrap", gap: "16px" }}>
+            <div className="responsive-tabs" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid var(--palette-border)", paddingBottom: "12px", flexWrap: "wrap" }}>
               <div style={{ display: "flex", gap: "8px" }}>
                 {[
                   { id: "all", label: "✨ All Items" },
@@ -676,7 +676,7 @@ export default function BoardDetailPage() {
                     <p style={{ fontSize: "15px" }}>This board is empty. Add some pins or songs! 🌸</p>
                   </div>
                 ) : (
-                  <div style={{ columns: "3 280px", gap: "20px" }}>
+                  <div className="responsive-board-grid">
                     {mixedItems.map((item, index) => {
                       if (item.itemType === "pin") {
                         // Render Image Pin Card
@@ -825,7 +825,7 @@ export default function BoardDetailPage() {
                     <p style={{ fontSize: "15px" }}>No images pinned to this board yet. 🖼️</p>
                   </div>
                 ) : (
-                  <div style={{ columns: "3 280px", gap: "20px" }}>
+                  <div className="responsive-board-grid">
                     {pins.map((pin, index) => (
                       <div 
                         key={pin.id} 
@@ -914,11 +914,11 @@ export default function BoardDetailPage() {
 
       {/* Floating Spotify-style Audio Player */}
       {activePlayingSong && (
-        <div style={{ position: "fixed", bottom: "72px", left: 0, right: 0, backgroundColor: "var(--palette-nav-bg)", backdropFilter: "blur(20px)", borderTop: "1px solid var(--palette-border)", padding: "16px 24px", zIndex: 100, display: "flex", flexDirection: "column", gap: "10px", boxShadow: "0 -4px 20px rgba(0,0,0,0.15)" }}>
-          <div style={{ maxWidth: "1200px", margin: "0 auto", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "20px" }}>
+        <div style={{ position: "fixed", bottom: "72px", left: 0, right: 0, backgroundColor: "var(--palette-nav-bg)", backdropFilter: "blur(20px)", borderTop: "1px solid var(--palette-border)", padding: "12px 12px", zIndex: 100, display: "flex", flexDirection: "column", gap: "8px", boxShadow: "0 -4px 20px rgba(0,0,0,0.15)" }}>
+          <div className="responsive-player" style={{ maxWidth: "1200px", margin: "0 auto", width: "100%", display: "flex", justifyContent: "space-between" }}>
             
             {/* Song Info */}
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", width: "30%" }}>
+            <div className="responsive-player-section" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <div style={{ width: "48px", height: "48px", borderRadius: "8px", backgroundColor: "#EAD9FF", overflow: "hidden", flexShrink: 0 }}>
                 {activePlayingSong.artwork_url ? (
                   <img src={activePlayingSong.artwork_url} alt={activePlayingSong.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -933,14 +933,14 @@ export default function BoardDetailPage() {
             </div>
 
             {/* Play Controls */}
-            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <div className="responsive-controls" style={{ display: "flex", alignItems: "center", gap: "16px" }}>
               <button onClick={prevSong} style={{ fontSize: "20px", background: "none", border: "none", cursor: "pointer", color: "var(--palette-text)" }}>⏮️</button>
               <button onClick={togglePlay} style={{ fontSize: "32px", background: "none", border: "none", cursor: "pointer", color: "var(--palette-text)" }}>{isPlaying ? "⏸️" : "▶️"}</button>
               <button onClick={nextSong} style={{ fontSize: "20px", background: "none", border: "none", cursor: "pointer", color: "var(--palette-text)" }}>⏭️</button>
             </div>
 
             {/* Empty space for flex alignment */}
-            <div style={{ width: "30%", textAlign: "right", fontSize: "12px", color: "var(--palette-text-muted)" }}>
+            <div className="responsive-player-section" style={{ textAlign: "right", fontSize: "12px", color: "var(--palette-text-muted)" }}>
               Playing from {board?.title}
             </div>
 

@@ -41,13 +41,14 @@ export default function Explore() {
 
       {/* Header */}
       <header style={{ backgroundColor: "var(--palette-nav-bg)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--palette-border)", position: "sticky", top: 0, zIndex: 50 }}>
-        <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
+        <div className="responsive-header" style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <h1 style={{ fontSize: "22px", fontWeight: "700", color: "var(--palette-pink)" }}>🎨 Palette</h1>
           <input
             type="text"
             placeholder="🔍 Search boards, moods, music..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            className="responsive-search"
             style={{ flex: 1, maxWidth: "500px", padding: "10px 20px", borderRadius: "999px", border: "none", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", fontSize: "14px", outline: "none" }}
           />
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -57,7 +58,7 @@ export default function Explore() {
         </div>
       </header>
 
-      <main style={{ maxWidth: "1400px", margin: "0 auto", padding: "24px 24px 100px 24px" }}>
+      <main className="responsive-main" style={{ maxWidth: "1400px", margin: "0 auto" }}>
 
         <div style={{ marginBottom: "20px" }}>
           <h2 style={{ fontSize: "24px", fontWeight: "600" }}>Explore 🔍</h2>
@@ -95,7 +96,7 @@ export default function Explore() {
             <p style={{ fontSize: "13px", color: "var(--palette-text-muted)", marginTop: "4px" }}>Try a different search or category</p>
           </div>
         ) : (
-          <div style={{ columns: "4", gap: "16px" }}>
+          <div className="responsive-grid">
             {filtered.map((board) => (
               <Link
                 key={board.id}

@@ -46,7 +46,7 @@ export default function CreateBoard() {
     <div style={{ minHeight: "100vh", backgroundColor: "var(--palette-bg)", fontFamily: "system-ui, sans-serif" }}>
 
       <header style={{ backgroundColor: "var(--palette-nav-bg)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--palette-border)", position: "sticky", top: 0, zIndex: 50 }}>
-        <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="responsive-header" style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <h1 style={{ fontSize: "22px", fontWeight: "700", color: "var(--palette-pink)" }}>🎨 Palette</h1>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <ThemeToggle />
@@ -55,7 +55,7 @@ export default function CreateBoard() {
         </div>
       </header>
 
-      <main style={{ maxWidth: "600px", margin: "0 auto", padding: "24px 24px 100px 24px" }}>
+      <main className="responsive-main" style={{ maxWidth: "600px", margin: "0 auto" }}>
 
         <h2 style={{ fontSize: "24px", fontWeight: "600", marginBottom: "8px" }}>Create Board 🌸</h2>
         <p style={{ fontSize: "14px", color: "var(--palette-text-muted)", marginBottom: "32px" }}>Make something beautiful</p>

@@ -75,11 +75,12 @@ export default function Home() {
 
       {/* Top Navigation */}
       <header style={{ backgroundColor: "var(--palette-nav-bg)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--palette-border)", position: "sticky", top: 0, zIndex: 50, width: "100%" }}>
-        <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
+        <div className="responsive-header" style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <h1 style={{ fontSize: "22px", fontWeight: "700", color: "var(--palette-pink)", whiteSpace: "nowrap" }}>🎨 Palette</h1>
           <input
             type="text"
             placeholder="🔍 Search boards, moods, music..."
+            className="responsive-search"
             style={{ flex: 1, maxWidth: "500px", padding: "10px 20px", borderRadius: "999px", border: "none", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", fontSize: "14px", outline: "none" }}
           />
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -90,7 +91,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main style={{ maxWidth: "1400px", margin: "0 auto", padding: "24px 24px 100px 24px" }}>
+      <main className="responsive-main" style={{ maxWidth: "1400px", margin: "0 auto" }}>
 
         {/* Greeting */}
         <div style={{ marginBottom: "20px" }}>
@@ -123,7 +124,7 @@ export default function Home() {
         </div>
 
         {/* Masonry Grid */}
-        <div style={{ columns: "4", gap: "16px" }}>
+        <div className="responsive-grid">
           {filteredBoards.map((board) => (
             <Link
               key={board.id}

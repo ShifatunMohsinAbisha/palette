@@ -206,7 +206,7 @@ export default function Profile() {
     <div style={{ minHeight: "100vh", backgroundColor: "var(--palette-bg)", fontFamily: "system-ui, sans-serif" }}>
 
       <header style={{ backgroundColor: "var(--palette-nav-bg)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--palette-border)", position: "sticky", top: 0, zIndex: 50 }}>
-        <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="responsive-header" style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <h1 style={{ fontSize: "22px", fontWeight: "700", color: "var(--palette-pink)" }}>Palette</h1>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <ThemeToggle />
@@ -215,9 +215,9 @@ export default function Profile() {
         </div>
       </header>
 
-      <main style={{ maxWidth: "1400px", margin: "0 auto", padding: "24px 24px 100px 24px" }}>
+      <main className="responsive-main" style={{ maxWidth: "1400px", margin: "0 auto" }}>
 
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "40px", padding: "40px", borderRadius: "24px", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)" }}>
+        <div className="responsive-profile-card" style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "40px", borderRadius: "24px", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)" }}>
 
           {/* Avatar with upload */}
           <div
@@ -278,7 +278,7 @@ export default function Profile() {
           )}
 
           {/* Stats */}
-          <div style={{ display: "flex", gap: "40px", marginBottom: "20px" }}>
+          <div className="responsive-stats" style={{ display: "flex", marginBottom: "20px" }}>
             {[
               { label: "Boards", value: String(boards.length) },
               { label: "Followers", value: String(profile?.followers_count ?? 0) },
@@ -317,7 +317,7 @@ export default function Profile() {
         {boards.length === 0 && (
           <p style={{ fontSize: "14px", color: "var(--palette-text-muted)", textAlign: "center", padding: "40px 0" }}>No boards yet. Create your first one! 🌸</p>
         )}
-        <div style={{ columns: "4", gap: "16px" }}>
+        <div className="responsive-grid">
           {boards.map((board) => (
             <div key={board.id} style={{ breakInside: "avoid", marginBottom: "16px", position: "relative" }}>
               <Link
