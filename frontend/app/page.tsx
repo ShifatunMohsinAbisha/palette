@@ -29,6 +29,7 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState("✨ Trending");
   const [liked, setLiked] = useState<number[]>([]);
   const [apiBoards, setApiBoards] = useState<Array<{ id: number; title: string; author: string; likes: string; pins: number; color: string; emoji: string; category: string }>>([]);
+  const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
     // Fetch real boards from API
@@ -45,6 +46,15 @@ export default function Home() {
       }));
       setApiBoards(mapped);
     }).catch(() => {});
+
+    // Fetch logged-in user name
+    if (api.isLoggedIn()) {
+      api.getProfile().then((data) => {
+        setUserName(data.full_name || data.username || null);
+      }).catch(() => {
+        setUserName(null);
+      });
+    }
   }, []);
 
   const toggleLike = (id: number) => {
@@ -86,7 +96,7 @@ export default function Home() {
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <ThemeToggle />
             <button style={{ fontSize: "20px", background: "none", border: "none", cursor: "pointer" }}>🔔</button>
-            <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "var(--palette-pink)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "700", fontSize: "14px" }}>A</div>
+            <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "var(--palette-pink)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "700", fontSize: "14px" }}>{userName ? userName.charAt(0).toUpperCase() : "?"}</div>
           </div>
         </div>
       </header>
@@ -95,7 +105,7 @@ export default function Home() {
 
         {/* Greeting */}
         <div style={{ marginBottom: "20px" }}>
-          <h2 style={{ fontSize: "24px", fontWeight: "600" }}>Welcome, Abisha 🌸</h2>
+          <h2 style={{ fontSize: "24px", fontWeight: "600" }}>{userName ? `Welcome, ${userName} 🌸` : "Welcome to Palette 🌸"}</h2>
           <p style={{ fontSize: "14px", color: "var(--palette-text-muted)", marginTop: "4px" }}>Discover boards that match your mood today</p>
         </div>
 

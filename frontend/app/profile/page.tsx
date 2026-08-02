@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import ThemeToggle from "@/components/ThemeToggle";
 import { api } from "@/lib/api";
 
@@ -25,6 +26,7 @@ interface UserProfile {
 }
 
 export default function Profile() {
+  const router = useRouter();
   const [boards, setBoards] = useState<BoardData[]>([]);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -48,8 +50,19 @@ export default function Profile() {
     }
   };
 
-  // Load profile from API or localStorage fallback
+  const handleLogout = () => {
+    api.removeToken();
+    localStorage.removeItem("palette_profile");
+    router.push("/auth/login");
+  };
+
+  // Load profile from API — redirect if not logged in
   useEffect(() => {
+    if (!api.isLoggedIn()) {
+      router.push("/auth/login");
+      return;
+    }
+
     api.getBoards().then((data) => {
       const mapped = data.map((b: { id: number; title: string; cover_color: string; cover_emoji: string }) => ({
         id: b.id,
@@ -61,31 +74,18 @@ export default function Profile() {
       setBoards(mapped);
     }).catch(() => {});
 
-    // Try fetching from API first
+    // Fetch real profile from API
     api.getProfile().then((data) => {
       setProfile(data);
-      // Sync to localStorage
-      localStorage.setItem("palette_profile", JSON.stringify(data));
+      try {
+        localStorage.setItem("palette_profile", JSON.stringify(data));
+      } catch { /* ignore storage error */ }
     }).catch(() => {
-      // Fallback to localStorage profile
-      const saved = localStorage.getItem("palette_profile");
-      if (saved) {
-        try { setProfile(JSON.parse(saved)); } catch { /* ignore */ }
-      } else {
-        // Default profile for non-authenticated users
-        setProfile({
-          id: 0,
-          username: "abisha",
-          email: "abisha@palette.app",
-          full_name: "Abisha",
-          avatar_url: null,
-          bio: null,
-          followers_count: 0,
-          following_count: 0,
-        });
-      }
+      // Token might be expired — redirect to login
+      api.removeToken();
+      router.push("/auth/login");
     });
-  }, []);
+  }, [router]);
 
   const compressImage = (file: File): Promise<string> => {
     return new Promise((resolve) => {
@@ -292,7 +292,7 @@ export default function Profile() {
           </div>
 
           {/* Action Buttons */}
-          <div style={{ display: "flex", gap: "12px" }}>
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", justifyContent: "center" }}>
             <button
               onClick={openEditModal}
               style={{
@@ -310,6 +310,20 @@ export default function Profile() {
             <Link href="/create" style={{ padding: "10px 24px", borderRadius: "999px", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", fontSize: "14px", fontWeight: "600", textDecoration: "none" }}>
               + Create Board
             </Link>
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: "10px 24px", borderRadius: "999px",
+                backgroundColor: "var(--palette-danger)", color: "var(--palette-danger-text)",
+                fontSize: "14px", fontWeight: "600",
+                border: "none", cursor: "pointer",
+                transition: "opacity 0.2s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+            >
+              🚪 Logout
+            </button>
           </div>
         </div>
 
