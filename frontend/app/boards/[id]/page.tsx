@@ -131,6 +131,7 @@ export default function BoardDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params?.id;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
   const [board, setBoard] = useState<BoardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -201,7 +202,7 @@ export default function BoardDetailPage() {
     }
 
     setLoading(true);
-    fetch(`http://127.0.0.1:8000/boards/${id}`)
+    fetch(`${API_BASE_URL}/boards/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Board not found");
         return res.json();
@@ -370,7 +371,7 @@ export default function BoardDetailPage() {
     }
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/boards/${id}/pins`, {
+      const res = await fetch(`${API_BASE_URL}/boards/${id}/pins`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newPinBody),
@@ -396,7 +397,7 @@ export default function BoardDetailPage() {
     }
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/boards/${id}/pins/${pinId}`, {
+      const res = await fetch(`${API_BASE_URL}/boards/${id}/pins/${pinId}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete pin");
@@ -424,7 +425,7 @@ export default function BoardDetailPage() {
     if (boardId < 0) return;
 
     try {
-      await fetch(`http://127.0.0.1:8000/boards/${id}/pins/rearrange`, {
+      await fetch(`${API_BASE_URL}/boards/${id}/pins/rearrange`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids: reordered.map(p => p.id) }),
@@ -476,7 +477,7 @@ export default function BoardDetailPage() {
     }
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/boards/${id}/songs`, {
+      const res = await fetch(`${API_BASE_URL}/boards/${id}/songs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newSongBody),
@@ -514,7 +515,7 @@ export default function BoardDetailPage() {
     }
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/boards/${id}/songs/${songId}`, {
+      const res = await fetch(`${API_BASE_URL}/boards/${id}/songs/${songId}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to remove song");
@@ -548,7 +549,7 @@ export default function BoardDetailPage() {
     if (boardId < 0) return;
 
     try {
-      await fetch(`http://127.0.0.1:8000/boards/${id}/songs/rearrange`, {
+      await fetch(`${API_BASE_URL}/boards/${id}/songs/rearrange`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids: reordered.map(s => s.id) }),

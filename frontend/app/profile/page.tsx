@@ -40,9 +40,9 @@ export default function Profile() {
 
   const deleteBoard = async (boardId: number) => {
     const confirmed = window.confirm("Are you sure you want to delete this board?");
-    if (!confirmed) return;
     try {
-      const res = await fetch(`http://127.0.0.1:8000/boards/${boardId}`, { method: "DELETE" });
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const res = await fetch(`${baseUrl}/boards/${boardId}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete");
       setBoards(prev => prev.filter(b => b.id !== boardId));
     } catch {
