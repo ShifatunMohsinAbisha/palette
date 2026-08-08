@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ThemeToggle from "@/components/ThemeToggle";
+import PasswordInput from "@/components/PasswordInput";
 import { api } from "@/lib/api";
 
 interface BoardData {
@@ -35,8 +36,42 @@ export default function Profile() {
   const [editAvatar, setEditAvatar] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const modalFileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 8) {
+      setPasswordError("Password must be at least 8 characters long");
+      return;
+    }
+    if (!/\d/.test(newPassword)) {
+      setPasswordError("Password must contain at least one number");
+      return;
+    }
+    setChangingPassword(true);
+    setPasswordError("");
+    setPasswordSuccess("");
+    try {
+      await api.changePassword(currentPassword, newPassword);
+      setPasswordSuccess("Password changed successfully!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setTimeout(() => setShowChangePasswordModal(false), 1500);
+    } catch (err: any) {
+      setPasswordError(err.message || "Failed to change password");
+    } finally {
+      setChangingPassword(false);
+    }
+  };
 
   const deleteBoard = async (boardId: number) => {
     const confirmed = window.confirm("Are you sure you want to delete this board?");
@@ -312,6 +347,23 @@ export default function Profile() {
             >
               ✏️ Edit Profile
             </button>
+            <button
+              onClick={() => {
+                setPasswordError("");
+                setPasswordSuccess("");
+                setCurrentPassword("");
+                setNewPassword("");
+                setShowChangePasswordModal(true);
+              }}
+              style={{
+                padding: "10px 24px", borderRadius: "999px",
+                backgroundColor: "var(--palette-surface)", color: "var(--palette-text)",
+                fontSize: "14px", fontWeight: "600",
+                border: "1px solid var(--palette-border)", cursor: "pointer",
+              }}
+            >
+              🔒 Password
+            </button>
             <Link href="/create" style={{ padding: "10px 24px", borderRadius: "999px", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", fontSize: "14px", fontWeight: "600", textDecoration: "none" }}>
               + Create Board
             </Link>
@@ -508,6 +560,86 @@ export default function Profile() {
                 {saving ? "Saving..." : "Save Changes"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change Password Modal */}
+      {showChangePasswordModal && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 100, padding: "20px",
+        }} onClick={() => setShowChangePasswordModal(false)}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            backgroundColor: "var(--palette-surface)", borderRadius: "24px",
+            padding: "32px", width: "100%", maxWidth: "420px",
+            border: "1px solid var(--palette-border)", boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+          }}>
+            <h3 style={{ fontSize: "20px", fontWeight: "700", marginBottom: "20px" }}>Change Password 🔒</h3>
+
+            {passwordError && (
+              <div style={{ marginBottom: "16px", padding: "10px 14px", borderRadius: "10px", backgroundColor: "var(--palette-danger)", color: "var(--palette-danger-text)", fontSize: "13px" }}>
+                {passwordError}
+              </div>
+            )}
+
+            {passwordSuccess && (
+              <div style={{ marginBottom: "16px", padding: "10px 14px", borderRadius: "10px", backgroundColor: "rgba(76, 175, 80, 0.15)", color: "#2e7d32", fontSize: "13px", fontWeight: "600" }}>
+                {passwordSuccess}
+              </div>
+            )}
+
+            <form onSubmit={handleChangePassword} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div>
+                <label style={{ fontSize: "12px", fontWeight: "600", color: "var(--palette-text-muted)", display: "block", marginBottom: "6px" }}>Current Password</label>
+                <PasswordInput
+                  placeholder="Current Password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: "12px", fontWeight: "600", color: "var(--palette-text-muted)", display: "block", marginBottom: "6px" }}>New Password</label>
+                <PasswordInput
+                  placeholder="New Password (min 8 chars, 1 number)"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowChangePasswordModal(false)}
+                  style={{
+                    flex: 1, padding: "10px", borderRadius: "12px",
+                    border: "1px solid var(--palette-border)", backgroundColor: "transparent",
+                    color: "var(--palette-text)", fontSize: "14px", fontWeight: "600",
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={changingPassword}
+                  style={{
+                    flex: 1, padding: "10px", borderRadius: "12px",
+                    border: "none", backgroundColor: "var(--palette-pink)",
+                    color: "white", fontSize: "14px", fontWeight: "600",
+                    cursor: changingPassword ? "not-allowed" : "pointer",
+                    opacity: changingPassword ? 0.6 : 1,
+                  }}
+                >
+                  {changingPassword ? "Updating..." : "Update Password"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

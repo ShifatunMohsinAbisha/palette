@@ -8,7 +8,17 @@ from app.models.follow import Follow
 from app.schemas.user import UserRegister, UserLogin, UserResponse, UserUpdate, Token
 from app.utils.auth import hash_password, verify_password, create_access_token, verify_token
 
+from pydantic import BaseModel
+
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+class ResetPasswordRequest(BaseModel):
+    email: str
+    new_password: str
 
 @router.post("/register", response_model=UserResponse)
 def register(user_data: UserRegister, db: Session = Depends(get_db)):
@@ -79,3 +89,35 @@ def update_profile(updates: UserUpdate, user: User = Depends(get_current_user), 
     db.commit()
     db.refresh(user)
     return user
+
+@router.put("/change-password")
+def change_password(
+    req: ChangePasswordRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if not verify_password(req.current_password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Incorrect current password")
+    
+    if len(req.new_password) < 8 or not any(c.isdigit() for c in req.new_password):
+        raise HTTPException(status_code=400, detail="New password must be at least 8 characters long and contain at least one number")
+        
+    user.hashed_password = hash_password(req.new_password)
+    db.commit()
+    return {"message": "Password changed successfully"}
+
+@router.post("/reset-password")
+def reset_password(
+    req: ResetPasswordRequest,
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.email == req.email.strip()).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Email address not found")
+        
+    if len(req.new_password) < 8 or not any(c.isdigit() for c in req.new_password):
+        raise HTTPException(status_code=400, detail="New password must be at least 8 characters long and contain at least one number")
+        
+    user.hashed_password = hash_password(req.new_password)
+    db.commit()
+    return {"message": "Password reset successfully"}

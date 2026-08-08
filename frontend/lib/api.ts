@@ -223,4 +223,33 @@ export const api = {
     if (!res.ok) throw new Error("Failed to add song to board");
     return res.json();
   },
+
+  // Password Management
+  changePassword: async (current_password: string, new_password: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const res = await fetch(`${API_URL}/auth/change-password`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ current_password, new_password }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Failed to change password");
+    }
+    return res.json();
+  },
+
+  resetPassword: async (email: string, new_password: string) => {
+    const res = await fetch(`${API_URL}/auth/reset-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, new_password }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Failed to reset password");
+    }
+    return res.json();
+  },
 };
