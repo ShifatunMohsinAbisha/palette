@@ -82,6 +82,35 @@ export const api = {
     return res.json();
   },
 
+  updateBoard: async (id: number | string, data: { title?: string; description?: string; cover_color?: string; cover_emoji?: string; is_private?: boolean }) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const res = await fetch(`${API_URL}/boards/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Failed to update board");
+    }
+    return res.json();
+  },
+
+  deleteBoard: async (id: number | string) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const res = await fetch(`${API_URL}/boards/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Failed to delete board");
+    }
+    return res.json();
+  },
+
   // Profile
   getProfile: async () => {
     const token = localStorage.getItem("token");

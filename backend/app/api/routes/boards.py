@@ -26,6 +26,13 @@ class BoardCreate(BaseModel):
     cover_emoji: Optional[str] = "🌸"
     is_private: Optional[bool] = False
 
+class BoardUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    cover_color: Optional[str] = None
+    cover_emoji: Optional[str] = None
+    is_private: Optional[bool] = None
+
 class BoardResponse(BaseModel):
     id: int
     title: str
@@ -235,6 +242,43 @@ def rearrange_songs(board_id: int, req: RearrangeRequest, db: Session = Depends(
         db.query(Song).filter(Song.id == song_id, Song.board_id == board_id).update({"position": index})
     db.commit()
     return {"status": "success"}
+
+@router.put("/{board_id}")
+def update_board(
+    board_id: int,
+    updates: BoardUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    board = db.query(Board).filter(Board.id == board_id).first()
+    if not board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    if board.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="You don't own this board")
+
+    if updates.title is not None:
+        board.title = updates.title
+    if updates.description is not None:
+        board.description = updates.description
+    if updates.cover_color is not None:
+        board.cover_color = updates.cover_color
+    if updates.cover_emoji is not None:
+        board.cover_emoji = updates.cover_emoji
+    if updates.is_private is not None:
+        board.is_private = updates.is_private
+
+    db.commit()
+    db.refresh(board)
+    return {
+        "id": board.id,
+        "title": board.title,
+        "description": board.description,
+        "cover_color": board.cover_color,
+        "cover_emoji": board.cover_emoji,
+        "is_private": board.is_private,
+        "owner_id": board.owner_id,
+        "created_at": board.created_at
+    }
 
 @router.delete("/{board_id}")
 def delete_board(

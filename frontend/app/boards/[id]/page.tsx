@@ -169,11 +169,81 @@ export default function BoardDetailPage() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
+  const [showEditBoardModal, setShowEditBoardModal] = useState(false);
+  const [editBoardTitle, setEditBoardTitle] = useState("");
+  const [editBoardDesc, setEditBoardDesc] = useState("");
+  const [editBoardColor, setEditBoardColor] = useState("#FFD9E8");
+  const [editBoardEmoji, setEditBoardEmoji] = useState("🌸");
+  const [editBoardIsPrivate, setEditBoardIsPrivate] = useState(false);
+  const [savingBoard, setSavingBoard] = useState(false);
+
   useEffect(() => {
     if (api.isLoggedIn()) {
       api.getProfile().then(p => setCurrentUserId(p.id)).catch(() => {});
     }
   }, []);
+
+  const handleTogglePrivacy = async () => {
+    if (!board || !id) return;
+    const boardId = Array.isArray(id) ? id[0] : id;
+    try {
+      const updated = await api.updateBoard(boardId, { is_private: !board.is_private });
+      setBoard(prev => prev ? { ...prev, is_private: updated.is_private } : null);
+    } catch {
+      alert("Failed to update privacy");
+    }
+  };
+
+  const openEditBoardModal = () => {
+    if (!board) return;
+    setEditBoardTitle(board.title);
+    setEditBoardDesc(board.description || "");
+    setEditBoardColor(board.cover_color);
+    setEditBoardEmoji(board.cover_emoji);
+    setEditBoardIsPrivate(board.is_private);
+    setShowEditBoardModal(true);
+  };
+
+  const handleSaveBoard = async () => {
+    if (!id || !editBoardTitle.trim()) return;
+    const boardId = Array.isArray(id) ? id[0] : id;
+    setSavingBoard(true);
+    try {
+      const updated = await api.updateBoard(boardId, {
+        title: editBoardTitle.trim(),
+        description: editBoardDesc.trim(),
+        cover_color: editBoardColor,
+        cover_emoji: editBoardEmoji,
+        is_private: editBoardIsPrivate,
+      });
+      setBoard(prev => prev ? {
+        ...prev,
+        title: updated.title,
+        description: updated.description,
+        cover_color: updated.cover_color,
+        cover_emoji: updated.cover_emoji,
+        is_private: updated.is_private,
+      } : null);
+      setShowEditBoardModal(false);
+    } catch {
+      alert("Failed to update board");
+    } finally {
+      setSavingBoard(false);
+    }
+  };
+
+  const handleDeleteBoard = async () => {
+    if (!id) return;
+    const boardId = Array.isArray(id) ? id[0] : id;
+    const confirmed = window.confirm("Are you sure you want to delete this board? This action cannot be undone.");
+    if (!confirmed) return;
+    try {
+      await api.deleteBoard(boardId);
+      router.push("/profile");
+    } catch {
+      alert("Failed to delete board");
+    }
+  };
 
   useEffect(() => {
     if (board?.owner_id) {
@@ -657,24 +727,57 @@ export default function BoardDetailPage() {
             
             {/* Board Banner */}
             <div className="responsive-banner" style={{ backgroundColor: board.cover_color, borderRadius: "24px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px var(--palette-shadow)", position: "relative" }}>
-              <div style={{ position: "absolute", bottom: "-28px", backgroundColor: "var(--palette-surface)", padding: "8px 20px", borderRadius: "999px", border: "1px solid var(--palette-border)", boxShadow: "0 2px 10px var(--palette-shadow)", fontSize: "13px", fontWeight: "600", color: "var(--palette-text-secondary)", display: "flex", alignItems: "center", gap: "10px" }}>
-                <span>by @{board.owner?.username || "anonymous"} · {board.is_private ? "🔒 Private" : "🌐 Public"}</span>
+              <div style={{ position: "absolute", bottom: "-28px", backgroundColor: "var(--palette-surface)", padding: "8px 20px", borderRadius: "999px", border: "1px solid var(--palette-border)", boxShadow: "0 2px 10px var(--palette-shadow)", fontSize: "13px", fontWeight: "600", color: "var(--palette-text-secondary)", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                <span>by @{board.owner?.username || "anonymous"}</span>
+                
+                {/* Privacy Badge / Toggle */}
+                {board.owner_id && currentUserId === board.owner_id ? (
+                  <button
+                    onClick={handleTogglePrivacy}
+                    title="Click to toggle privacy"
+                    style={{
+                      padding: "3px 10px", borderRadius: "999px", border: "1px solid var(--palette-border)",
+                      backgroundColor: board.is_private ? "var(--palette-toggle-bg)" : "var(--palette-primary)",
+                      color: "var(--palette-text)", fontSize: "12px", fontWeight: "600", cursor: "pointer",
+                    }}
+                  >
+                    {board.is_private ? "🔒 Private" : "🌐 Public"} 🔄
+                  </button>
+                ) : (
+                  <span>· {board.is_private ? "🔒 Private" : "🌐 Public"}</span>
+                )}
+
+                {/* Follow Button for Other Users */}
                 {board.owner_id && currentUserId !== board.owner_id && (
                   <button
                     onClick={handleToggleFollow}
                     style={{
-                      padding: "4px 12px",
-                      borderRadius: "999px",
-                      border: "none",
+                      padding: "4px 12px", borderRadius: "999px", border: "none",
                       backgroundColor: isFollowing ? "var(--palette-border)" : "var(--palette-pink)",
                       color: isFollowing ? "var(--palette-text)" : "white",
-                      fontSize: "12px",
-                      fontWeight: "600",
-                      cursor: "pointer",
+                      fontSize: "12px", fontWeight: "600", cursor: "pointer",
                     }}
                   >
                     {isFollowing ? "Following ✓" : "+ Follow"}
                   </button>
+                )}
+
+                {/* Owner Actions: Edit & Delete */}
+                {board.owner_id && currentUserId === board.owner_id && (
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    <button
+                      onClick={openEditBoardModal}
+                      style={{ padding: "4px 10px", borderRadius: "999px", border: "none", backgroundColor: "var(--palette-pink)", color: "white", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button
+                      onClick={handleDeleteBoard}
+                      style={{ padding: "4px 10px", borderRadius: "999px", border: "none", backgroundColor: "#ff4d4d", color: "white", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}
+                    >
+                      🗑️ Delete
+                    </button>
+                  </div>
                 )}
               </div>
               {board.cover_emoji}
@@ -1050,6 +1153,77 @@ export default function BoardDetailPage() {
           style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, cursor: "zoom-out" }}
         >
           <img src={zoomImage} alt="Zoomed View" style={{ maxHeight: "85vh", maxWidth: "90vw", borderRadius: "12px", boxShadow: "0 4px 30px rgba(0,0,0,0.5)" }} />
+        </div>
+      )}
+
+      {/* Edit Board Modal */}
+      {showEditBoardModal && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 150 }} onClick={() => setShowEditBoardModal(false)}>
+          <div onClick={e => e.stopPropagation()} style={{ backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", borderRadius: "24px", padding: "32px", width: "90%", maxWidth: "480px", display: "flex", flexDirection: "column", gap: "20px", boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}>
+            <h3 style={{ fontSize: "20px", fontWeight: "700", margin: 0 }}>Edit Board ✏️</h3>
+
+            {/* Preview */}
+            <div style={{ borderRadius: "16px", overflow: "hidden", backgroundColor: editBoardColor, height: "100px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "40px" }}>
+              {editBoardEmoji}
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={{ fontSize: "12px", fontWeight: "600", color: "var(--palette-text-secondary)" }}>Board Name</label>
+              <input
+                type="text"
+                value={editBoardTitle}
+                onChange={e => setEditBoardTitle(e.target.value)}
+                style={{ padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--palette-border)", backgroundColor: "var(--palette-input-bg)", color: "var(--palette-text)", fontSize: "14px", outline: "none" }}
+              />
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={{ fontSize: "12px", fontWeight: "600", color: "var(--palette-text-secondary)" }}>Description</label>
+              <textarea
+                value={editBoardDesc}
+                onChange={e => setEditBoardDesc(e.target.value)}
+                rows={2}
+                style={{ padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--palette-border)", backgroundColor: "var(--palette-input-bg)", color: "var(--palette-text)", fontSize: "14px", outline: "none", resize: "none" }}
+              />
+            </div>
+
+            <div>
+              <label style={{ fontSize: "12px", fontWeight: "600", color: "var(--palette-text-secondary)", display: "block", marginBottom: "8px" }}>Emoji</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                {["🌸", "🌙", "🌊", "☀️", "🌿", "🏙️", "🌷", "🎵", "🎨", "🌺", "📚", "🎀", "🎧", "🌈", "🦋"].map(e => (
+                  <button key={e} onClick={() => setEditBoardEmoji(e)} style={{ fontSize: "20px", padding: "6px", borderRadius: "8px", border: `2px solid ${editBoardEmoji === e ? "var(--palette-border-active)" : "transparent"}`, backgroundColor: editBoardEmoji === e ? "var(--palette-primary)" : "var(--palette-bg)", cursor: "pointer" }}>{e}</button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontSize: "12px", fontWeight: "600", color: "var(--palette-text-secondary)", display: "block", marginBottom: "8px" }}>Cover Color</label>
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                {["#FFD9E8", "#EAD9FF", "#DDF4FF", "#FFF4C2", "#D9FBE5", "#FFB7D5", "#CDB8FF", "#8DD7FF"].map(c => (
+                  <button key={c} onClick={() => setEditBoardColor(c)} style={{ width: "32px", height: "32px", borderRadius: "50%", backgroundColor: c, border: `3px solid ${editBoardColor === c ? "var(--palette-text)" : "transparent"}`, cursor: "pointer" }} />
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px", borderRadius: "12px", backgroundColor: "var(--palette-bg)", border: "1px solid var(--palette-border)" }}>
+              <div>
+                <p style={{ fontSize: "13px", fontWeight: "600" }}>Private Board</p>
+                <p style={{ fontSize: "11px", color: "var(--palette-text-muted)" }}>Only you can view this board</p>
+              </div>
+              <button onClick={() => setEditBoardIsPrivate(!editBoardIsPrivate)} style={{ width: "44px", height: "24px", borderRadius: "999px", backgroundColor: editBoardIsPrivate ? "var(--palette-pink)" : "var(--palette-toggle-bg)", border: "none", cursor: "pointer", position: "relative" }}>
+                <div style={{ width: "18px", height: "18px", borderRadius: "50%", backgroundColor: "white", position: "absolute", top: "3px", left: editBoardIsPrivate ? "23px" : "3px", transition: "left 0.2s" }} />
+              </button>
+            </div>
+
+            <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+              <button onClick={() => setShowEditBoardModal(false)} style={{ padding: "10px 18px", borderRadius: "999px", border: "1px solid var(--palette-border)", backgroundColor: "transparent", color: "var(--palette-text-secondary)", cursor: "pointer", fontSize: "13px", fontWeight: "600" }}>
+                Cancel
+              </button>
+              <button onClick={handleSaveBoard} disabled={savingBoard} style={{ padding: "10px 22px", borderRadius: "999px", border: "none", backgroundColor: "var(--palette-pink)", color: "white", cursor: savingBoard ? "not-allowed" : "pointer", fontSize: "13px", fontWeight: "600" }}>
+                {savingBoard ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
