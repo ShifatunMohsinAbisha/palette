@@ -1,13 +1,14 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import auth, boards
+from app.api.routes import auth, boards, users
 from app.core.database import engine
 from app.models.user import Base
 # Import all models so their tables register with Base.metadata
 from app.models.board import Board  # noqa: F401
 from app.models.pin import Pin  # noqa: F401
 from app.models.song import Song  # noqa: F401
+from app.models.follow import Follow  # noqa: F401
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -38,6 +39,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(boards.router)
+app.include_router(users.router)
 
 @app.get("/")
 def root():

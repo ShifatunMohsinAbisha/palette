@@ -78,6 +78,37 @@ def get_boards(
     boards = db.query(Board).filter(Board.owner_id == current_user.id).all()
     return boards
 
+@router.get("/public")
+def get_public_boards(
+    q: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    query = db.query(Board).filter((Board.is_private == False) | (Board.is_private.is_(None)))
+    if q and q.strip():
+        search = f"%{q.strip()}%"
+        query = query.filter((Board.title.ilike(search)) | (Board.description.ilike(search)))
+    
+    boards = query.order_by(Board.created_at.desc()).all()
+    
+    results = []
+    for b in boards:
+        owner = db.query(User).filter(User.id == b.owner_id).first() if b.owner_id else None
+        pin_count = db.query(func.count(Pin.id)).filter(Pin.board_id == b.id).scalar() or 0
+        results.append({
+            "id": b.id,
+            "title": b.title,
+            "description": b.description,
+            "cover_color": b.cover_color,
+            "cover_emoji": b.cover_emoji,
+            "is_private": b.is_private or False,
+            "created_at": b.created_at,
+            "owner_id": b.owner_id,
+            "author": owner.full_name or owner.username if owner else "Anonymous",
+            "author_username": owner.username if owner else "",
+            "pins_count": pin_count,
+        })
+    return results
+
 @router.get("/{board_id}")
 def get_board(board_id: int, db: Session = Depends(get_db)):
     board = db.query(Board).filter(Board.id == board_id).first()

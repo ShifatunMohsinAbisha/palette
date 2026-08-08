@@ -1,23 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
-
-const exploreBoards = [
-  { id: 1, title: "Cherry Blossom Afternoon", author: "Luna", likes: "2.3K", pins: 45, color: "#FFD9E8", emoji: "🌸", category: "Aesthetic" },
-  { id: 2, title: "Midnight Study Vibes", author: "Aria", likes: "1.8K", pins: 32, color: "#EAD9FF", emoji: "🌙", category: "Study" },
-  { id: 3, title: "Ocean Daydream", author: "Mira", likes: "3.1K", pins: 67, color: "#DDF4FF", emoji: "🌊", category: "Nature" },
-  { id: 4, title: "Golden Hour", author: "Sol", likes: "4.2K", pins: 89, color: "#FFF4C2", emoji: "☀️", category: "Aesthetic" },
-  { id: 5, title: "Forest Whispers", author: "Fern", likes: "986", pins: 28, color: "#D9FBE5", emoji: "🌿", category: "Nature" },
-  { id: 6, title: "Neon Tokyo Nights", author: "Kei", likes: "5.7K", pins: 112, color: "#EAD9FF", emoji: "🏙️", category: "Gaming" },
-  { id: 7, title: "Cottagecore Dreams", author: "Rose", likes: "2.9K", pins: 54, color: "#D9FBE5", emoji: "🌷", category: "Cute" },
-  { id: 8, title: "Rainy Day Jazz", author: "Blue", likes: "1.2K", pins: 19, color: "#DDF4FF", emoji: "🎵", category: "Music" },
-  { id: 9, title: "Anime Wonderland", author: "Yuki", likes: "8.1K", pins: 134, color: "#FFD9E8", emoji: "🌺", category: "Anime" },
-  { id: 10, title: "Dark Academia", author: "Sage", likes: "6.3K", pins: 98, color: "#EAD9FF", emoji: "📚", category: "Study" },
-  { id: 11, title: "Pastel Dreams", author: "Lily", likes: "3.7K", pins: 76, color: "#FFF4C2", emoji: "🎀", category: "Cute" },
-  { id: 12, title: "Lo-fi Beats", author: "Coda", likes: "4.9K", pins: 61, color: "#D9FBE5", emoji: "🎧", category: "Music" },
-];
+import { api } from "@/lib/api";
 
 const categories = ["All", "Aesthetic", "Study", "Nature", "Music", "Cute", "Gaming", "Anime"];
 
@@ -25,11 +11,27 @@ export default function Explore() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [liked, setLiked] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [boards, setBoards] = useState<Array<{ id: number; title: string; author: string; likes: string; pins: number; color: string; emoji: string; category: string }>>([]);
 
-  const filtered = exploreBoards.filter(b => {
+  useEffect(() => {
+    api.getPublicBoards(searchQuery).then((data) => {
+      const mapped = data.map((b: { id: number; title: string; cover_color: string; cover_emoji: string; author?: string; pins_count?: number }) => ({
+        id: b.id,
+        title: b.title,
+        author: b.author || "Anonymous",
+        likes: "0",
+        pins: b.pins_count || 0,
+        color: b.cover_color,
+        emoji: b.cover_emoji,
+        category: "Aesthetic",
+      }));
+      setBoards(mapped);
+    }).catch(() => {});
+  }, [searchQuery]);
+
+  const filtered = boards.filter(b => {
     const matchesCategory = activeCategory === "All" || b.category === activeCategory;
-    const matchesSearch = searchQuery.trim() === "" || b.title.toLowerCase().includes(searchQuery.trim().toLowerCase());
-    return matchesCategory && matchesSearch;
+    return matchesCategory;
   });
 
   const toggleLike = (id: number) => {

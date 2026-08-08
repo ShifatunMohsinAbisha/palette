@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Header
 import os
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.user import User
+from app.models.follow import Follow
 from app.schemas.user import UserRegister, UserLogin, UserResponse, UserUpdate, Token
 from app.utils.auth import hash_password, verify_password, create_access_token, verify_token
 
@@ -54,7 +56,11 @@ def get_current_user(authorization: str = Header(None), db: Session = Depends(ge
     return user
 
 @router.get("/me", response_model=UserResponse)
-def get_profile(user: User = Depends(get_current_user)):
+def get_profile(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    followers = db.query(func.count(Follow.id)).filter(Follow.following_id == user.id).scalar() or 0
+    following = db.query(func.count(Follow.id)).filter(Follow.follower_id == user.id).scalar() or 0
+    user.followers_count = followers
+    user.following_count = following
     return user
 
 @router.put("/me", response_model=UserResponse)

@@ -68,6 +68,14 @@ export const api = {
     return res.json();
   },
 
+  getPublicBoards: async (q?: string) => {
+    const url = new URL(`${API_URL}/boards/public`);
+    if (q) url.searchParams.append("q", q);
+    const res = await fetch(url.toString());
+    if (!res.ok) throw new Error("Failed to fetch public boards");
+    return res.json();
+  },
+
   getBoard: async (id: number | string) => {
     const res = await fetch(`${API_URL}/boards/${id}`);
     if (!res.ok) throw new Error("Failed to fetch board");
@@ -97,6 +105,38 @@ export const api = {
       const err = await res.json();
       throw new Error(err.detail || "Failed to update profile");
     }
+    return res.json();
+  },
+
+  // Users & Follows
+  getUserProfile: async (userId: number) => {
+    const token = localStorage.getItem("token");
+    const headers: Record<string, string> = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    const res = await fetch(`${API_URL}/users/${userId}`, { headers });
+    if (!res.ok) throw new Error("Failed to fetch user profile");
+    return res.json();
+  },
+
+  followUser: async (userId: number) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const res = await fetch(`${API_URL}/users/${userId}/follow`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Failed to follow user");
+    return res.json();
+  },
+
+  unfollowUser: async (userId: number) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const res = await fetch(`${API_URL}/users/${userId}/follow`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Failed to unfollow user");
     return res.json();
   },
 };

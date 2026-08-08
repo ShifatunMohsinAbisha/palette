@@ -11,25 +11,28 @@ const categories = ["📌 For You", "🎵 Music", "💖 Cute", "🌸 Aesthetic",
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("📌 For You");
   const [liked, setLiked] = useState<number[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [apiBoards, setApiBoards] = useState<Array<{ id: number; title: string; author: string; likes: string; pins: number; color: string; emoji: string; category: string }>>([]);
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch real boards from API
-    api.getBoards().then((data) => {
-      const mapped = data.map((b: { id: number; title: string; cover_color: string; cover_emoji: string; description?: string }) => ({
+    // Fetch public boards from API
+    api.getPublicBoards(searchQuery).then((data) => {
+      const mapped = data.map((b: { id: number; title: string; cover_color: string; cover_emoji: string; author?: string; pins_count?: number }) => ({
         id: b.id,
         title: b.title,
-        author: "You",
+        author: b.author || "Anonymous",
         likes: "0",
-        pins: 0,
+        pins: b.pins_count || 0,
         color: b.cover_color,
         emoji: b.cover_emoji,
         category: "",
       }));
       setApiBoards(mapped);
     }).catch(() => {});
+  }, [searchQuery]);
 
+  useEffect(() => {
     // Fetch logged-in user name
     if (api.isLoggedIn()) {
       api.getProfile().then((data) => {
@@ -67,6 +70,8 @@ export default function Home() {
           <input
             type="text"
             placeholder="🔍 Search boards, moods, music..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="responsive-search"
             style={{ flex: 1, maxWidth: "500px", padding: "10px 20px", borderRadius: "999px", border: "none", backgroundColor: "var(--palette-primary)", color: "var(--palette-text)", fontSize: "14px", outline: "none" }}
           />

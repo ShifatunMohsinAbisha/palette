@@ -15,7 +15,16 @@ export default function Register() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+    if (!/\d/.test(formData.password)) {
+      setError("Password must contain at least one number");
+      return;
+    }
     setLoading(true);
+    setError("");
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://palette-production-93ce.up.railway.app";
       const res = await fetch(`${baseUrl}/auth/register`, {

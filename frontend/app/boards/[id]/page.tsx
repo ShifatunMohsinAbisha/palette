@@ -162,7 +162,54 @@ export default function BoardDetailPage() {
   const [songDuration, setSongDuration] = useState(30);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const pinFileInputRef = useRef<HTMLInputElement | null>(null);
   const [searchPerformed, setSearchPerformed] = useState(false);
+
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (api.isLoggedIn()) {
+      api.getProfile().then(p => setCurrentUserId(p.id)).catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    if (board?.owner_id) {
+      api.getUserProfile(board.owner_id).then(user => {
+        setIsFollowing(user.is_following);
+      }).catch(() => {});
+    }
+  }, [board?.owner_id]);
+
+  const handleToggleFollow = async () => {
+    if (!board?.owner_id) return;
+    if (!api.isLoggedIn()) {
+      router.push("/auth/login");
+      return;
+    }
+    try {
+      if (isFollowing) {
+        await api.unfollowUser(board.owner_id);
+        setIsFollowing(false);
+      } else {
+        await api.followUser(board.owner_id);
+        setIsFollowing(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleFileUpload = async (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        setPinUrl(e.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   // Fetch Board Details (or mock data)
   useEffect(() => {
@@ -609,8 +656,25 @@ export default function BoardDetailPage() {
             
             {/* Board Banner */}
             <div className="responsive-banner" style={{ backgroundColor: board.cover_color, borderRadius: "24px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px var(--palette-shadow)", position: "relative" }}>
-              <div style={{ position: "absolute", bottom: "-28px", backgroundColor: "var(--palette-surface)", padding: "12px 24px", borderRadius: "999px", border: "1px solid var(--palette-border)", boxShadow: "0 2px 10px var(--palette-shadow)", fontSize: "13px", fontWeight: "600", color: "var(--palette-text-secondary)" }}>
-                by @{board.owner?.username || "abisha"} · {board.is_private ? "🔒 Private" : "🌐 Public"} · {new Date(board.created_at).toLocaleDateString()}
+              <div style={{ position: "absolute", bottom: "-28px", backgroundColor: "var(--palette-surface)", padding: "8px 20px", borderRadius: "999px", border: "1px solid var(--palette-border)", boxShadow: "0 2px 10px var(--palette-shadow)", fontSize: "13px", fontWeight: "600", color: "var(--palette-text-secondary)", display: "flex", alignItems: "center", gap: "10px" }}>
+                <span>by @{board.owner?.username || "anonymous"} · {board.is_private ? "🔒 Private" : "🌐 Public"}</span>
+                {board.owner_id && currentUserId !== board.owner_id && (
+                  <button
+                    onClick={handleToggleFollow}
+                    style={{
+                      padding: "4px 12px",
+                      borderRadius: "999px",
+                      border: "none",
+                      backgroundColor: isFollowing ? "var(--palette-border)" : "var(--palette-pink)",
+                      color: isFollowing ? "var(--palette-text)" : "white",
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {isFollowing ? "Following ✓" : "+ Follow"}
+                  </button>
+                )}
               </div>
               {board.cover_emoji}
             </div>
@@ -995,13 +1059,32 @@ export default function BoardDetailPage() {
             <h3 style={{ fontSize: "20px", fontWeight: "700", margin: 0 }}>Pin a Moment 🖼️</h3>
             
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <label style={{ fontSize: "12px", fontWeight: "600", color: "var(--palette-text-secondary)" }}>Image URL</label>
-              <input 
-                type="text" 
-                placeholder="https://images.unsplash.com/..." 
-                value={pinUrl} 
-                onChange={e => setPinUrl(e.target.value)}
-                style={{ padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--palette-border)", backgroundColor: "var(--palette-input-bg)", color: "var(--palette-text)", fontSize: "14px", outline: "none" }}
+              <label style={{ fontSize: "12px", fontWeight: "600", color: "var(--palette-text-secondary)" }}>Image URL or Upload</label>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <input 
+                  type="text" 
+                  placeholder="https://images.unsplash.com/... or upload" 
+                  value={pinUrl.startsWith("data:") ? "Image file selected 📷" : pinUrl} 
+                  onChange={e => setPinUrl(e.target.value)}
+                  style={{ flex: 1, padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--palette-border)", backgroundColor: "var(--palette-input-bg)", color: "var(--palette-text)", fontSize: "14px", outline: "none" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => pinFileInputRef.current?.click()}
+                  style={{ padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--palette-pink)", backgroundColor: "var(--palette-pink)", color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap" }}
+                >
+                  📁 Browse
+                </button>
+              </div>
+              <input
+                ref={pinFileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileUpload(file);
+                }}
               />
             </div>
 
