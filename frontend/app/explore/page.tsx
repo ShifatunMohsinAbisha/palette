@@ -11,15 +11,18 @@ export default function Explore() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [liked, setLiked] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [boards, setBoards] = useState<Array<{ id: number; title: string; author: string; likes: string; pins: number; color: string; emoji: string; category: string }>>([]);
+  const [boards, setBoards] = useState<Array<{ id: number; title: string; author: string; author_username: string; owner_id?: number; likes_count: number; is_liked: boolean; pins: number; color: string; emoji: string; category: string }>>([]);
 
   useEffect(() => {
     api.getPublicBoards(searchQuery).then((data) => {
-      const mapped = data.map((b: { id: number; title: string; cover_color: string; cover_emoji: string; author?: string; pins_count?: number }) => ({
+      const mapped = data.map((b: { id: number; title: string; cover_color: string; cover_emoji: string; author?: string; author_username?: string; owner_id?: number; pins_count?: number; likes_count?: number; is_liked?: boolean }) => ({
         id: b.id,
         title: b.title,
         author: b.author || "Anonymous",
-        likes: "0",
+        author_username: b.author_username || "",
+        owner_id: b.owner_id,
+        likes_count: b.likes_count || 0,
+        is_liked: b.is_liked || false,
         pins: b.pins_count || 0,
         color: b.cover_color,
         emoji: b.cover_emoji,
@@ -34,8 +37,25 @@ export default function Explore() {
     return matchesCategory;
   });
 
-  const toggleLike = (id: number) => {
-    setLiked(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  const toggleLike = async (id: number, currentlyLiked: boolean) => {
+    if (!api.isLoggedIn()) {
+      window.location.href = "/auth/login";
+      return;
+    }
+    try {
+      if (currentlyLiked) {
+        await api.unlikeBoard(id);
+      } else {
+        await api.likeBoard(id);
+      }
+      setBoards(prev => prev.map(b => {
+        if (b.id === id) {
+          const newLikes = currentlyLiked ? Math.max(0, b.likes_count - 1) : b.likes_count + 1;
+          return { ...b, likes_count: newLikes, is_liked: !currentlyLiked };
+        }
+        return b;
+      }));
+    } catch { /* ignore */ }
   };
 
   return (
@@ -113,18 +133,35 @@ export default function Explore() {
                   </div>
                   <div style={{ padding: "12px" }}>
                     <h3 style={{ fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>{board.title}</h3>
-                    <p style={{ fontSize: "12px", color: "var(--palette-text-muted)", marginBottom: "8px" }}>by {board.author} · {board.pins} pins</p>
+                    <p style={{ fontSize: "12px", color: "var(--palette-text-muted)", marginBottom: "8px" }}>
+                      by{" "}
+                      {board.owner_id ? (
+                        <span
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.location.href = `/user/${board.owner_id}`;
+                          }}
+                          style={{ color: "var(--palette-pink)", fontWeight: "600", textDecoration: "underline" }}
+                        >
+                          {board.author}
+                        </span>
+                      ) : (
+                        board.author
+                      )}{" "}
+                      · {board.pins} pins
+                    </p>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <span style={{ fontSize: "12px", color: "var(--palette-text-faint)" }}>♫ Snowfall</span>
+                      <span style={{ fontSize: "12px", color: "var(--palette-text-faint)" }}>♫ Vibes</span>
                       <button
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          toggleLike(board.id);
+                          toggleLike(board.id, board.is_liked);
                         }}
-                        style={{ fontSize: "13px", background: "none", border: "none", cursor: "pointer" }}
+                        style={{ fontSize: "13px", background: "none", border: "none", cursor: "pointer", color: "var(--palette-text)" }}
                       >
-                        {liked.includes(board.id) ? "❤️" : "🤍"} {board.likes}
+                        {board.is_liked ? "❤️" : "🤍"} {board.likes_count}
                       </button>
                     </div>
                   </div>

@@ -139,4 +139,59 @@ export const api = {
     if (!res.ok) throw new Error("Failed to unfollow user");
     return res.json();
   },
+
+  // Likes & Comments
+  likeBoard: async (boardId: number) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const res = await fetch(`${API_URL}/boards/${boardId}/like`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Failed to like board");
+    return res.json();
+  },
+
+  unlikeBoard: async (boardId: number) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const res = await fetch(`${API_URL}/boards/${boardId}/like`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Failed to unlike board");
+    return res.json();
+  },
+
+  addComment: async (boardId: number, pinId: number, text: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
+    const res = await fetch(`${API_URL}/boards/${boardId}/pins/${pinId}/comments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ text }),
+    });
+    if (!res.ok) throw new Error("Failed to add comment");
+    return res.json();
+  },
+
+  getComments: async (boardId: number, pinId: number) => {
+    const res = await fetch(`${API_URL}/boards/${boardId}/pins/${pinId}/comments`);
+    if (!res.ok) throw new Error("Failed to fetch comments");
+    return res.json();
+  },
+
+  // Songs
+  addSongToBoard: async (boardId: number, songData: any) => {
+    const token = localStorage.getItem("token");
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    const res = await fetch(`${API_URL}/boards/${boardId}/songs`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(songData),
+    });
+    if (!res.ok) throw new Error("Failed to add song to board");
+    return res.json();
+  },
 };

@@ -9,6 +9,8 @@ from app.models.board import Board  # noqa: F401
 from app.models.pin import Pin  # noqa: F401
 from app.models.song import Song  # noqa: F401
 from app.models.follow import Follow  # noqa: F401
+from app.models.board_like import BoardLike  # noqa: F401
+from app.models.comment import Comment  # noqa: F401
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
