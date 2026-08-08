@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Header
+import traceback
+import os
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.user import User
@@ -28,13 +30,30 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
+@router.get("/debug")
+def debug_env():
+    """Temporary debug endpoint - remove after fixing"""
+    import sys
+    secret = os.getenv("SECRET_KEY")
+    expire = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
+    return {
+        "python_version": sys.version,
+        "secret_key_set": secret is not None,
+        "secret_key_length": len(secret) if secret else 0,
+        "expire_minutes_raw": expire,
+        "expire_minutes_type": type(expire).__name__,
+    }
+
 @router.post("/login", response_model=Token)
 def login(user_data: UserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == user_data.email).first()
     if not user or not verify_password(user_data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    token = create_access_token({"sub": str(user.id)})
+    try:
+        token = create_access_token({"sub": str(user.id)})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Token error: {type(e).__name__}: {str(e)}")
     return {"access_token": token, "token_type": "bearer"}
 
 def get_current_user(authorization: str = Header(None), db: Session = Depends(get_db)):
