@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
+import { api } from "@/lib/api";
 
 const initialPlaylists = [
   { id: 1, title: "Chemtrails Over the Country Club", artist: "Lana Del Rey", query: "Chemtrails Over the Country Club Lana Del Rey", mood: "Chill", color: "#DDF4FF", emoji: "🛩️", duration: "4:31", youtubeId: "gCw1f1GmPaU" },
@@ -54,8 +55,36 @@ export default function Music() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(180);
 
+  const [userBoards, setUserBoards] = useState<Array<{ id: number; title: string }>>([]);
+  const [activeBoardDropdown, setActiveBoardDropdown] = useState<number | null>(null);
+
   const containerRef = useRef<HTMLDivElement | null>(null);
   const playerRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (api.isLoggedIn()) {
+      api.getBoards().then(b => setUserBoards(b)).catch(() => {});
+    }
+  }, []);
+
+  const handleAddSongToBoard = async (song: Track, boardId: number) => {
+    try {
+      await api.addSongToBoard(boardId, {
+        title: song.title,
+        artist: song.artist,
+        artwork_url: song.artwork || null,
+        youtube_id: song.youtubeId || "uTaL05_4a3o",
+        duration: song.duration || "3:00",
+        mood: song.mood || "Chill",
+        color: song.color || "#FFD9E8",
+        emoji: song.emoji || "🎵",
+      });
+      alert(`Added "${song.title}" to board! 🌸`);
+      setActiveBoardDropdown(null);
+    } catch {
+      alert("Failed to add song to board.");
+    }
+  };
 
   // Load YouTube script on mount and fetch iTunes artwork
   useEffect(() => {
@@ -340,6 +369,34 @@ export default function Music() {
                 </div>
                 <span style={{ fontSize: "12px", color: "var(--palette-text-faint)", marginRight: "8px" }}>{song.mood}</span>
                 <span style={{ fontSize: "12px", color: "var(--palette-text-muted)" }}>{song.duration}</span>
+                
+                {userBoards.length > 0 && (
+                  <div style={{ position: "relative" }} onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={() => setActiveBoardDropdown(activeBoardDropdown === song.id ? null : song.id)}
+                      style={{ padding: "6px 12px", borderRadius: "999px", border: "1px solid var(--palette-pink)", backgroundColor: "transparent", color: "var(--palette-pink)", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}
+                    >
+                      ➕ Add to Board
+                    </button>
+                    {activeBoardDropdown === song.id && (
+                      <div style={{ position: "absolute", right: 0, top: "100%", marginTop: "6px", backgroundColor: "var(--palette-surface)", border: "1px solid var(--palette-border)", borderRadius: "12px", boxShadow: "0 4px 16px rgba(0,0,0,0.2)", zIndex: 100, minWidth: "160px", padding: "6px 0" }}>
+                        <p style={{ fontSize: "11px", fontWeight: "700", padding: "6px 12px", borderBottom: "1px solid var(--palette-border)", color: "var(--palette-text-muted)" }}>Select Board:</p>
+                        {userBoards.map(b => (
+                          <div
+                            key={b.id}
+                            onClick={() => handleAddSongToBoard(song, b.id)}
+                            style={{ padding: "8px 12px", fontSize: "13px", cursor: "pointer", whiteSpace: "nowrap" }}
+                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--palette-primary)")}
+                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                          >
+                            {b.title}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <button onClick={(e) => { e.stopPropagation(); playTrack(songIndex); }} style={{ fontSize: "18px", background: "none", border: "none", cursor: "pointer" }}>
                   {isActive && isPlaying ? "⏸️" : "▶️"}
                 </button>
