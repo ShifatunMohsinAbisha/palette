@@ -5,28 +5,11 @@ import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 import { api } from "@/lib/api";
 
-const demoBoards = [
-  { id: -1, title: "Cherry Blossom Afternoon", author: "Luna", likes: "2.3K", pins: 45, color: "#FFD9E8", emoji: "🌸", category: "Aesthetic" },
-  { id: -2, title: "Midnight Study Vibes", author: "Aria", likes: "1.8K", pins: 32, color: "#EAD9FF", emoji: "🌙", category: "Study" },
-  { id: -3, title: "Ocean Daydream", author: "Mira", likes: "3.1K", pins: 67, color: "#DDF4FF", emoji: "🌊", category: "Nature" },
-  { id: -4, title: "Golden Hour", author: "Sol", likes: "4.2K", pins: 89, color: "#FFF4C2", emoji: "☀️", category: "Aesthetic" },
-  { id: -5, title: "Forest Whispers", author: "Fern", likes: "986", pins: 28, color: "#D9FBE5", emoji: "🌿", category: "Nature" },
-  { id: -6, title: "Neon Tokyo Nights", author: "Kei", likes: "5.7K", pins: 112, color: "#EAD9FF", emoji: "🏙️", category: "Gaming" },
-  { id: -7, title: "Cottagecore Dreams", author: "Rose", likes: "2.9K", pins: 54, color: "#D9FBE5", emoji: "🌷", category: "Cute" },
-  { id: -8, title: "Rainy Day Jazz", author: "Blue", likes: "1.2K", pins: 19, color: "#DDF4FF", emoji: "🎵", category: "Music" },
-];
 
-const categories = ["✨ Trending", "📌 For You", "🎵 Music", "💖 Cute", "🌸 Aesthetic", "🌿 Nature", "📚 Study", "🎮 Gaming"];
-
-function parseLikes(likes: string): number {
-  const str = likes.trim().toUpperCase();
-  if (str.endsWith("K")) return parseFloat(str) * 1000;
-  if (str.endsWith("M")) return parseFloat(str) * 1000000;
-  return parseFloat(str) || 0;
-}
+const categories = ["📌 For You", "🎵 Music", "💖 Cute", "🌸 Aesthetic", "🌿 Nature", "📚 Study", "🎮 Gaming"];
 
 export default function Home() {
-  const [activeCategory, setActiveCategory] = useState("✨ Trending");
+  const [activeCategory, setActiveCategory] = useState("📌 For You");
   const [liked, setLiked] = useState<number[]>([]);
   const [apiBoards, setApiBoards] = useState<Array<{ id: number; title: string; author: string; likes: string; pins: number; color: string; emoji: string; category: string }>>([]);
   const [userName, setUserName] = useState<string | null>(null);
@@ -67,15 +50,9 @@ export default function Home() {
   const activeCategoryLabel = activeCategory.replace(/^[^\s]+\s/, "");
 
   // Filter and sort boards based on active category
-  const allBoards = [...apiBoards, ...demoBoards];
   const filteredBoards = (() => {
-    if (activeCategoryLabel === "Trending") {
-      return [...allBoards].sort((a, b) => parseLikes(b.likes) - parseLikes(a.likes));
-    }
-    if (activeCategoryLabel === "For You") {
-      return allBoards;
-    }
-    return allBoards.filter(
+    if (activeCategoryLabel === "For You") return apiBoards;
+    return apiBoards.filter(
       (board) => board.category.toLowerCase() === activeCategoryLabel.toLowerCase()
     );
   })();

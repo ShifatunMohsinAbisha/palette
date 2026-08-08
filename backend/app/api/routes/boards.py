@@ -6,6 +6,7 @@ from app.models.board import Board
 from app.models.user import User
 from app.models.pin import Pin
 from app.models.song import Song
+from app.api.routes.auth import get_current_user
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
@@ -51,14 +52,18 @@ class RearrangeRequest(BaseModel):
     ids: List[int]
 
 @router.post("/", response_model=BoardResponse)
-def create_board(board_data: BoardCreate, db: Session = Depends(get_db)):
+def create_board(
+    board_data: BoardCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     new_board = Board(
         title=board_data.title,
         description=board_data.description,
         cover_color=board_data.cover_color,
         cover_emoji=board_data.cover_emoji,
         is_private=board_data.is_private,
-        owner_id=None
+        owner_id=current_user.id
     )
     db.add(new_board)
     db.commit()
@@ -66,8 +71,11 @@ def create_board(board_data: BoardCreate, db: Session = Depends(get_db)):
     return new_board
 
 @router.get("/")
-def get_boards(db: Session = Depends(get_db)):
-    boards = db.query(Board).all()
+def get_boards(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    boards = db.query(Board).filter(Board.owner_id == current_user.id).all()
     return boards
 
 @router.get("/{board_id}")
@@ -95,8 +103,8 @@ def get_board(board_id: int, db: Session = Depends(get_db)):
         "created_at": board.created_at,
         "owner_id": board.owner_id,
         "owner": {
-            "username": owner.username if owner else "abisha",
-            "full_name": owner.full_name if owner else "Abisha"
+            "username": owner.username if owner else "",
+            "full_name": owner.full_name if owner else ""
         },
         "pins": pins,
         "songs": songs
@@ -178,11 +186,16 @@ def rearrange_songs(board_id: int, req: RearrangeRequest, db: Session = Depends(
     return {"status": "success"}
 
 @router.delete("/{board_id}")
-def delete_board(board_id: int, db: Session = Depends(get_db)):
+def delete_board(
+    board_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     board = db.query(Board).filter(Board.id == board_id).first()
     if not board:
         raise HTTPException(status_code=404, detail="Board not found")
-    # Delete associated pins and songs first
+    if board.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="You don't own this board")
     db.query(Pin).filter(Pin.board_id == board_id).delete()
     db.query(Song).filter(Song.board_id == board_id).delete()
     db.delete(board)

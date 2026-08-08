@@ -45,9 +45,11 @@ export const api = {
 
   // Boards
   createBoard: async (data: { title: string; description?: string; cover_color?: string; cover_emoji?: string; is_private?: boolean }) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Not authenticated");
     const res = await fetch(`${API_URL}/boards/`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify(data),
     });
     if (!res.ok) {
@@ -58,7 +60,10 @@ export const api = {
   },
 
   getBoards: async () => {
-    const res = await fetch(`${API_URL}/boards/`);
+    const token = localStorage.getItem("token");
+    const headers: Record<string, string> = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    const res = await fetch(`${API_URL}/boards/`, { headers });
     if (!res.ok) throw new Error("Failed to fetch boards");
     return res.json();
   },

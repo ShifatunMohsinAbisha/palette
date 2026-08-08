@@ -40,9 +40,14 @@ export default function Profile() {
 
   const deleteBoard = async (boardId: number) => {
     const confirmed = window.confirm("Are you sure you want to delete this board?");
+    if (!confirmed) return;
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://palette-production-93ce.up.railway.app";
-      const res = await fetch(`${baseUrl}/boards/${boardId}`, { method: "DELETE" });
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${baseUrl}/boards/${boardId}`, {
+        method: "DELETE",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
       if (!res.ok) throw new Error("Failed to delete");
       setBoards(prev => prev.filter(b => b.id !== boardId));
     } catch {
@@ -199,8 +204,8 @@ export default function Profile() {
     setSaving(false);
   };
 
-  const displayName = profile?.full_name || profile?.username || "Abisha";
-  const displayUsername = profile?.username || "abisha";
+  const displayName = profile?.full_name || profile?.username || "";
+  const displayUsername = profile?.username || "";
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--palette-bg)", fontFamily: "system-ui, sans-serif" }}>

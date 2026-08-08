@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -18,6 +18,12 @@ export default function CreateBoard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    if (!api.isLoggedIn()) {
+      router.push("/auth/login");
+    }
+  }, [router]);
 
   const handleCreateBoard = async () => {
     if (!title.trim()) {
