@@ -131,7 +131,7 @@ export default function BoardDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params?.id;
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://palette-production-93ce.up.railway.app";
 
   const [board, setBoard] = useState<BoardData | null>(null);
   const [loading, setLoading] = useState(true);
